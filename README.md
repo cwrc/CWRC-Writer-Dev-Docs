@@ -39,14 +39,14 @@ The CWRC NPM packages that are used in the browser:
 ###### CWRC-WriterBase
 The base class for the cwrc-writer.
 
-[cwrc-writer-base in NPM](https://www.npmjs.com/package/cwrc-writer-base)
-[CWRC-GitWriterBase in GitHub](https://github.com/jchartrand/CWRC-GitWriterBase)
+* in NPM: [cwrc-writer-base](https://www.npmjs.com/package/cwrc-writer-base)
+* in GitHub: [CWRC-GitWriterBase](https://github.com/jchartrand/CWRC-GitWriterBase)
 
 ###### CWRCGitDelegator
 Delegator to which [cwrc-writer-base](https://www.npmjs.com/package/cwrc-writer-base) delegates server-side calls.  Used by the [cwrc-writer-base](https://www.npmjs.com/package/cwrc-writer-base) to make calls to [CWRC-GitServer](https://github.com/jchartrand/CWRC-GitServer).
 
-[cwrc-git-delegator (NPM)](https://www.npmjs.com/package/cwrc-git-delegator)
-[CWRC-GitDelegator (GitHub)](https://github.com/jchartrand/CWRC-GitDelegator)
+- in NPM: [cwrc-git-delegator](https://www.npmjs.com/package/cwrc-git-delegator)
+- in GitHub: [CWRC-GitDelegator](https://github.com/jchartrand/CWRC-GitDelegator)
 
 ###### CWRC-GitServerClient
 Client for calls to the [CWRC-GitServer](https://github.com/jchartrand/CWRC-GitServer) from the [cwrc-git-delegator](https://www.npmjs.com/package/cwrc-git-delegator).
