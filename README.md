@@ -6,25 +6,27 @@ CWRC-Writer-Dev-Docs
 Describes the overall organization of the CWRC-Writer code as NPM packages, and the development procedures for CWRC-Writer coding.
 
 1. [Overview](#overview)
+1. [CWRC-Writer](#cwrcwriter)
+1. [Server](#server)
 1. [Development Process](#development)
 
-### Overview
+## Overview
 
-The CWRC-Writer is an in-browser WYSIWYG XML text editor that also supports standoff RDF annotation to mark references to named entities in the text.  There are two main parts to the application that run more or less independently:  the editor itself that runs in the web browser, and the backend server for document storage, XML validation, and entity lookup, that runs on a server.  
+The CWRC-Writer is an in-browser WYSIWYG XML text editor that also supports standoff RDF annotation to mark references to named entities in the text.  There are two main parts to the application that run more or less independently:  the CWRC-Writer editor that runs in the web browser, and the complementary backend server for document storage, XML validation, and entity lookup, that runs on a server.  
 
-#### The CWRC-Writer text editor itself, running in the web browser
+## CWRC-Writer
 
 A CWRC-Writer instance is built around the [CWRC-WriterBase](https://www.npmjs.com/package/cwrc-writer-base), a heavily customized version of the [TinyMCE](https://www.tinymce.com) web editor.
 
-##### Delegator
+#### Delegator
 
 To communicate with the backend, an additional javascript object that we've called the 'Delegator' (because the editor 'delegates' server side requests to it) is packaged up with the [CWRC-WriterBase](https://www.npmjs.com/package/cwrc-writer-base).  The delegator handles requests to list, create, or save documents, or to validate XML documents.  The delegator takes those requests and forwards them on to the server that carries out the actual request.  The default delegator for CWRC is the [CWRC-GitDelegator](https://www.npmjs.com/package/cwrc-git-delegator) that handles requests to the default [CWRC-GitServer](https://www.npmjs.com/package/cwrc-git-server) (which in turn makes calls to GitHub itself to list documents, save documents, etc.).
 
-##### Entity Lookup
+#### Entity Lookup
 
 The editor also allows users to lookup references to named entities (people, places, organizations) and so another javascript object, much like the delegator, is also packaged in with the [CWRC-WriterBase](https://www.npmjs.com/package/cwrc-writer-base), and handles entity lookup. The default entity lookup package is [https://www.npmjs.com/package/cwrc-public-entity-dialogs](https://www.npmjs.com/package/cwrc-public-entity-dialogs) which looks up named entities in [VIAF](https://viaf.org) and returns unique URIs for the selected entity.
 
-##### NPM packages and browserify
+#### NPM packages and browserify
 
 The [CWRC-WriterBase](https://www.npmjs.com/package/cwrc-writer-base), the delegator, the entity lookups, and a few other things are organized as [NPM](https://www.npmjs.com) packages (and published to the [public npm repository](https://www.npmjs.com/search?q=cwrc) for use by anyone).  
 
@@ -60,21 +62,21 @@ Delegator to which the [cwrc-writer-base](https://www.npmjs.com/package/cwrc-wri
 
 Typical development on the browser part of the CWRC-Writer will therefore be changes to the above packages.  Each package has it's own GitHub repository, listed above, with specifics about how to work with it.  General development practices are also listed below in [Development Process](#development).
 
-#### Server-side services 
+## Server
 
-Services for storing documents, XML validation, and entity lookup.  The backend pieces can be anything, written in any language.  
+The server runs provices services for storing documents, XML validation, and entity lookup.  The server can be implemented however one would like, and in particular, can be a more general server used by other applications.
 
-##### Entity Lookup
+#### Entity Lookup
 
-The default lookup for the CWRC-Writer uses the VIAF servers directly.  And so the [cwrc-public-entity-dialogs (NPM)](https://www.npmjs.com/package/cwrc-public-entity-dialogs) package running in the browser makes calls directly to VIAF.  You could alternatively implement your own server side entity management system and follow the example of the [cwrc-public-entity-dialogs (NPM)](https://www.npmjs.com/package/cwrc-public-entity-dialogs) to make calls to your system.
+The default lookup for the CWRC-Writer is an example of a general service that isn't specific to the CWRC-Writer.  It uses the VIAF servers directly.  The [cwrc-public-entity-dialogs (NPM)](https://www.npmjs.com/package/cwrc-public-entity-dialogs) package running in the browser makes calls directly to VIAF.  You could alternatively implement your own server side entity management system and follow the example of the [cwrc-public-entity-dialogs (NPM)](https://www.npmjs.com/package/cwrc-public-entity-dialogs) to make calls to your own system or to any other system, for example to another lookup service like say WorldCat.
 
-##### XML Validation
+#### XML Validation
 
 The default XML Validator is supplied by CWRC.  The call to it is in the default delegator: [cwrc-git-delegator (NPM)](https://www.npmjs.com/package/cwrc-git-delegator).  If you are implementing your own delegator, you'll probably want to use the same call to the CWRC Validator.
 
-##### Document Storage
+#### Document Storage
 
-The default backend server we use for storage is the [CWRC-GitServer](https://github.com/jchartrand/CWRC-GitServer), an Express.js server that uses GitHub for storage.
+The default backend server we use for storage is the [CWRC-GitServer](https://github.com/jchartrand/CWRC-GitServer), an Express.js server that in turn uses GitHub for storage.
 
 There is one NPM CWRC package used in the [CWRC-GitServer](https://github.com/jchartrand/CWRC-GitServer):
 
@@ -84,7 +86,9 @@ Client for creating and updating CWRC XML documents in GitHub through the GitHub
 
 Typical development on the server part of the CWRC-Writer will therefore be changes to the [CWRC-GitServer](https://github.com/jchartrand/CWRC-GitServer) and to [cwrcgit (NPM)](https://www.npmjs.com/package/cwrcgit).  Each  has it's own GitHub repository, listed above, with specifics about how to work with it.  General development practices are also listed below in [Development Process](#development).
 
-### General Development Practices
+## General Development Practices
+
+#### Basic Setup
 
 * Fork or clone (depending on your role in the project) the relevant repo to your local machine.
 
@@ -98,15 +102,17 @@ Typical development on the server part of the CWRC-Writer will therefore be chan
 
 Note that .gitignore doesn't ignore files that have been comitted, and the config.js file likely has, to allow the Travis build tool to run, but with dummy values.
 
+#### Test and code
+
 * write a test (or two) for your new feature (in 'spec' directory)
 
 * `npm test` to start mocha and automatically rerun the tests whenever you change a file
 
 * write some code to satisfy new test
 
-### Commit to Github / Build in Travis / Release to NPM
+#### Commit to Github / Build in Travis / Release to NPM
 
-If you are working within a cloned copy, do the following to setup automatic semantic release through continuous integration using [semantic-release-cli](https://www.npmjs.com/package/semantic-release-cli) and [commitizen](https://www.npmjs.com/package/commitizen).  Otherwise, if you are working from a fork, then submit a pull-request.
+Setup automatic semantic release through continuous integration using [semantic-release-cli](https://www.npmjs.com/package/semantic-release-cli) and [commitizen](https://www.npmjs.com/package/commitizen).  
 
 Make sure you've got NPM configured to publish to the NPM registry:
 
@@ -160,9 +166,13 @@ script:
 
 Of course, if the githooks that check tests and code coverage themselves passed, then the Travis check for tests and code coverage should also be fine.
 
+##### Travis
+
 Results of the travis build are here:
 
 `https://travis-ci.org/jchartrand/CWRC-Git` 
+
+##### Code Coverage
 
 The Travis build also publishes the code coverage statistics to codecov.io where the coverage can be viewed:
 
@@ -176,13 +186,17 @@ in the project directory.
 
 codecov.io also provides us with the code coverage badge at the top of this README.
 
+##### NPM Publishing
+
 Finally the Travis build publishes a new version (if the commit was designated as a new feature or breaking change) to NPM:
 
 https://www.npmjs.com/package/cwrcgit
+
+##### Testing
 
 Testing uses mocha and chai.  Tests are in the `spec` directory. 
 
 For modules that make http calls (e.g., the cwrcgit package, which makes calls to the GitHub API, including calls to create new repositories), rather than make those calls for every test, [nock](https://github.com/node-nock/nock) instead mocks the calls to GitHub (intercepts the calls and instead returns pre-recorded data).
 
-Testing of DOM elements is done with [https://www.npmjs.com/package/jsdom](https://www.npmjs.com/package/jsdom) within standard mocha tests.
+Testing of changes to DOM elements is done with [https://www.npmjs.com/package/jsdom](https://www.npmjs.com/package/jsdom) within standard mocha tests.
 
