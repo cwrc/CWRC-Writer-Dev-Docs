@@ -37,33 +37,43 @@ The best example of how the NPM packages are combined and browserified is in the
 The CWRC NPM packages that are used in the browser:
 
 ###### CWRC-WriterBase
-
 The base class for the cwrc-writer.
 
-[cwrc-writer-base (NPM)](https://www.npmjs.com/package/cwrc-writer-base)
-[CWRC-GitWriterBase (GitHub)](https://github.com/jchartrand/CWRC-GitWriterBase)
+[cwrc-writer-base in NPM](https://www.npmjs.com/package/cwrc-writer-base)
+[CWRC-GitWriterBase in GitHub](https://github.com/jchartrand/CWRC-GitWriterBase)
 
-
+###### CWRCGitDelegator
+Delegator to which [cwrc-writer-base](https://www.npmjs.com/package/cwrc-writer-base) delegates server-side calls.  Used by the [cwrc-writer-base](https://www.npmjs.com/package/cwrc-writer-base) to make calls to [CWRC-GitServer](https://github.com/jchartrand/CWRC-GitServer).
 
 [cwrc-git-delegator (NPM)](https://www.npmjs.com/package/cwrc-git-delegator)
 [CWRC-GitDelegator (GitHub)](https://github.com/jchartrand/CWRC-GitDelegator)
-Delegator to which [cwrc-writer-base](https://www.npmjs.com/package/cwrc-writer-base) delegates server-side calls.  Used by the [cwrc-writer-base](https://www.npmjs.com/package/cwrc-writer-base) to make calls to [CWRC-GitServer](https://github.com/jchartrand/CWRC-GitServer).
+
+###### CWRC-GitServerClient
+Client for calls to the [CWRC-GitServer](https://github.com/jchartrand/CWRC-GitServer) from the [cwrc-git-delegator](https://www.npmjs.com/package/cwrc-git-delegator).
 
 [cwrc-git-server-client (NPM)](https://www.npmjs.com/package/cwrc-git-server-client)
 [CWRC-GitServerClient (GitHub)](https://github.com/jchartrand/CWRC-GitServerClient)
-Client for calls to the [CWRC-GitServer](https://github.com/jchartrand/CWRC-GitServer) from the [cwrc-git-delegator](https://www.npmjs.com/package/cwrc-git-delegator).
+
+###### CWRCPublicEntityDialogs
+Dialogs for the [cwrc-writer-base](https://www.npmjs.com/package/cwrc-writer-base) that lookup people, places, organizations, and publications in public authority files.
 
 [cwrc-public-entity-dialogs (NPM)](https://www.npmjs.com/package/cwrc-public-entity-dialogs)
 [CWRC-PublicEntityDialogs (GitHub)](https://github.com/jchartrand/CWRC-PublicEntityDialogs)
-Dialogs for the [cwrc-writer-base](https://www.npmjs.com/package/cwrc-writer-base) that lookup people, places, organizations, and publications in public authority files.
+
+###### CWRCWriterLayout
+Components for customizing the CWRC-Writer layout.  This package is used by the layout-config.js file in an instance of the CWRC-Writer.  See (CWRC-GitWriter)[https://github.com/jchartrand/CWRC-GitWriter] for an example.
+
 
 [cwrc-writer-layout (NPM)](https://www.npmjs.com/package/cwrc-writer-layout)
 [CWRC-WriterLayout (GitHub)](https://github.com/jchartrand/CWRC-WriterLayout)
-Components for customizing the CWRC-Writer layout.  This package is used by the layout-config.js file in an instance of the CWRC-Writer.  See (CWRC-GitWriter)[https://github.com/jchartrand/CWRC-GitWriter] for an example.
+
+###### CWRCBasicDelegator
+
+Delegator to which the [cwrc-writer-base](https://www.npmjs.com/package/cwrc-writer-base) delegates server side calls for file creation in the file system on the server; entity lookups; schema retrieval; xml validation; template loading.  THIS PACKAGE IS DEPRECATED AND SHOULD NOT BE USED.
+
 
 [cwrc-basic-delegator (NPM)](https://www.npmjs.com/package/cwrc-basic-delegator)
 [CWRC-BasicDelegator (GitHub)](https://github.com/jchartrand/CWRC-BasicDelegator)
-Delegator to which the [cwrc-writer-base](https://www.npmjs.com/package/cwrc-writer-base) delegates server side calls for file creation in the file system on the server; entity lookups; schema retrieval; xml validation; template loading.  THIS PACKAGE IS DEPRECATED AND SHOULD NOT BE USED.
 
 Typical development on the browser part of the CWRC-Writer will therefore be changes to the above packages.  Each package has it's own GitHub repository, listed above, with specifics about how to work with it.  General development practices are also listed below in [Development Process](#development).
 
