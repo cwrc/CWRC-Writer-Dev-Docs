@@ -12,7 +12,7 @@ Describes the overall organization of the CWRC-Writer code as NPM packages, and 
 
 ## Overview
 
-The CWRC-Writer is an in-browser WYSIWYG XML text editor that also supports standoff RDF annotation to mark references to named entities in the text.  There are two main parts to the application that run more or less independently:  the CWRC-Writer editor that runs in the web browser, and the complementary backend server for document storage, XML validation, and entity lookup, that runs on a server.  
+The CWRC-Writer is an in-browser WYSIWYG XML text editor that also supports standoff RDF annotation to mark references to named entities in the text.  There are two main parts to the application that run more or less independently:  the CWRC-Writer editor that runs in the web browser, and the complementary backend services for document storage, XML validation, and entity lookup, that run on a server.  
 
 ## CWRC-Writer
 
@@ -32,9 +32,9 @@ The [CWRC-WriterBase](https://www.npmjs.com/package/cwrc-writer-base), the deleg
 
 The NPM packages that contribute to the browser part of the CWRC-Writer are combined together using the node.js module loading system and with [Browserify](https://browserify.org).  So, we write code like we would for a node.js application (that would normally run on the server), using the node.js 'require' statements to import packages, and Browserify bundles all the code together (both our packages and all other packages we've included like jquery, bootstrap, and so on) into a single javascript file that can then be referenced in the index.html page of our web app.
 
-The best example of how the NPM packages are combined and browserified is in the (CWRC-GitWriter)[https://github.com/jchartrand/CWRC-GitWriter] repository.
+The best example of how the NPM packages are combined and browserified is in the (CWRC-GitWriter)[https://github.com/jchartrand/CWRC-GitWriter] repository.  Specifically take a look at the (app.js)[https://github.com/jchartrand/CWRC-GitWriter/blob/master/src/js/app.js] file, the so-called 'entry point' into the application, which is what Browserify starts with, and then 'crawls' the dependency tree to pull in all dependencies (as defined by 'require' statements).  The (app.js)[https://github.com/jchartrand/CWRC-GitWriter/blob/master/src/js/app.js] also show how the 'require' statements are used to combine the javascript packages together, and how to pass them into the [CWRC-WriterBase](https://www.npmjs.com/package/cwrc-writer-base).
 
-The CWRC NPM packages that are packaged up for use in the browser:
+The CWRC NPM packages that are used in the browser:
 
 [cwrc-writer-base (NPM)](https://www.npmjs.com/package/cwrc-writer-base)
 [CWRC-GitWriterBase (GitHub)](https://github.com/jchartrand/CWRC-GitWriterBase)
