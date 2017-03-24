@@ -24,7 +24,7 @@ To communicate with the backend, an additional javascript object that we've call
 
 #### Entity Lookup
 
-The editor also allows users to lookup references to named entities (people, places, organizations) and so another javascript object, much like the delegator, is also packaged in with the [CWRC-WriterBase](https://www.npmjs.com/package/cwrc-writer-base), and handles entity lookup. The default entity lookup package is [https://www.npmjs.com/package/cwrc-public-entity-dialogs](https://www.npmjs.com/package/cwrc-public-entity-dialogs) which looks up named entities in [VIAF](https://viaf.org) and returns unique URIs for the selected entity.
+The editor also allows users to lookup references to named entities (people, places, organizations) and so another javascript object, much like the delegator, is also packaged in with the [CWRC-WriterBase](https://www.npmjs.com/package/cwrc-writer-base), and handles entity lookup. The default entity lookup package is [cwrc-public-entity-dialogs](https://www.npmjs.com/package/cwrc-public-entity-dialogs) which looks up named entities in [VIAF](https://viaf.org) and returns unique URIs for the selected entity.
 
 #### NPM packages and browserify
 
@@ -36,9 +36,8 @@ The best example of how the NPM packages are combined and browserified is in the
 
 The CWRC NPM packages that are used in the browser:
 
--[cwrc-writer-base (NPM)](https://www.npmjs.com/package/cwrc-writer-base)
--[CWRC-GitWriterBase (GitHub)](https://github.com/jchartrand/CWRC-GitWriterBase)
-
+*[cwrc-writer-base (NPM)](https://www.npmjs.com/package/cwrc-writer-base)
+*[CWRC-GitWriterBase (GitHub)](https://github.com/jchartrand/CWRC-GitWriterBase)
 The base class for the cwrc-writer.
 
 [cwrc-git-delegator (NPM)](https://www.npmjs.com/package/cwrc-git-delegator)
@@ -73,7 +72,7 @@ The default lookup for the CWRC-Writer is an example of a general service that i
 
 #### XML Validation
 
-The default XML Validator is supplied by CWRC.  The call to it is in the default delegator: [cwrc-git-delegator (NPM)](https://www.npmjs.com/package/cwrc-git-delegator).  If you are implementing your own delegator, you'll probably want to use the same call to the CWRC Validator.
+The default XML validator is a public server supplied by CWRC.  The call to it is in the default delegator: [cwrc-git-delegator (NPM)](https://www.npmjs.com/package/cwrc-git-delegator).  If you are implementing your own delegator, you'll probably want to use the same call to the CWRC validation server.
 
 #### Document Storage
 
