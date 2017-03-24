@@ -36,12 +36,11 @@ The best example of how the NPM packages are combined and browserified is in the
 
 The CWRC NPM packages that are used in the browser:
 
-####### CWRC-WriterBase
+###### CWRC-WriterBase
 
 The base class for the cwrc-writer.
 
 [cwrc-writer-base (NPM)](https://www.npmjs.com/package/cwrc-writer-base)
-
 [CWRC-GitWriterBase (GitHub)](https://github.com/jchartrand/CWRC-GitWriterBase)
 
 
