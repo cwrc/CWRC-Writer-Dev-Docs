@@ -45,35 +45,33 @@ The base class for the cwrc-writer.
 ###### CWRCGitDelegator
 Delegator to which [cwrc-writer-base](https://www.npmjs.com/package/cwrc-writer-base) delegates server-side calls.  Used by the [cwrc-writer-base](https://www.npmjs.com/package/cwrc-writer-base) to make calls to [CWRC-GitServer](https://github.com/jchartrand/CWRC-GitServer).
 
-- in NPM: [cwrc-git-delegator](https://www.npmjs.com/package/cwrc-git-delegator)
-- in GitHub: [CWRC-GitDelegator](https://github.com/jchartrand/CWRC-GitDelegator)
+* in NPM: [cwrc-git-delegator](https://www.npmjs.com/package/cwrc-git-delegator)
+* in GitHub: [CWRC-GitDelegator](https://github.com/jchartrand/CWRC-GitDelegator)
 
 ###### CWRC-GitServerClient
 Client for calls to the [CWRC-GitServer](https://github.com/jchartrand/CWRC-GitServer) from the [cwrc-git-delegator](https://www.npmjs.com/package/cwrc-git-delegator).
 
-[cwrc-git-server-client (NPM)](https://www.npmjs.com/package/cwrc-git-server-client)
-[CWRC-GitServerClient (GitHub)](https://github.com/jchartrand/CWRC-GitServerClient)
+* in NPM: [cwrc-git-server-client](https://www.npmjs.com/package/cwrc-git-server-client)
+* in GitHub: [CWRC-GitServerClient](https://github.com/jchartrand/CWRC-GitServerClient)
 
 ###### CWRCPublicEntityDialogs
 Dialogs for the [cwrc-writer-base](https://www.npmjs.com/package/cwrc-writer-base) that lookup people, places, organizations, and publications in public authority files.
 
-[cwrc-public-entity-dialogs (NPM)](https://www.npmjs.com/package/cwrc-public-entity-dialogs)
-[CWRC-PublicEntityDialogs (GitHub)](https://github.com/jchartrand/CWRC-PublicEntityDialogs)
+* in NPM: [cwrc-public-entity-dialogs](https://www.npmjs.com/package/cwrc-public-entity-dialogs)
+* in GitHub: [CWRC-PublicEntityDialogs](https://github.com/jchartrand/CWRC-PublicEntityDialogs)
 
 ###### CWRCWriterLayout
 Components for customizing the CWRC-Writer layout.  This package is used by the layout-config.js file in an instance of the CWRC-Writer.  See (CWRC-GitWriter)[https://github.com/jchartrand/CWRC-GitWriter] for an example.
 
-
-[cwrc-writer-layout (NPM)](https://www.npmjs.com/package/cwrc-writer-layout)
-[CWRC-WriterLayout (GitHub)](https://github.com/jchartrand/CWRC-WriterLayout)
+* in NPM: [cwrc-writer-layout](https://www.npmjs.com/package/cwrc-writer-layout)
+* in GitHub: [CWRC-WriterLayout](https://github.com/jchartrand/CWRC-WriterLayout)
 
 ###### CWRCBasicDelegator
 
 Delegator to which the [cwrc-writer-base](https://www.npmjs.com/package/cwrc-writer-base) delegates server side calls for file creation in the file system on the server; entity lookups; schema retrieval; xml validation; template loading.  THIS PACKAGE IS DEPRECATED AND SHOULD NOT BE USED.
 
-
-[cwrc-basic-delegator (NPM)](https://www.npmjs.com/package/cwrc-basic-delegator)
-[CWRC-BasicDelegator (GitHub)](https://github.com/jchartrand/CWRC-BasicDelegator)
+* in NPM: [cwrc-basic-delegator](https://www.npmjs.com/package/cwrc-basic-delegator)
+* in GitHub: [CWRC-BasicDelegator](https://github.com/jchartrand/CWRC-BasicDelegator)
 
 Typical development on the browser part of the CWRC-Writer will therefore be changes to the above packages.  Each package has it's own GitHub repository, listed above, with specifics about how to work with it.  General development practices are also listed below in [Development Process](#development).
 
@@ -95,8 +93,8 @@ The default backend server we use for storage is the [CWRC-GitServer](https://gi
 
 There is one NPM CWRC package used in the [CWRC-GitServer](https://github.com/jchartrand/CWRC-GitServer):
 
-[cwrcgit (NPM)](https://www.npmjs.com/package/cwrcgit)
-[CWRC-Git (GitHub)](https://github.com/jchartrand/CWRC-Git)
+* in NPM: [cwrcgit](https://www.npmjs.com/package/cwrcgit)
+* in GitHub: [CWRC-Git](https://github.com/jchartrand/CWRC-Git)
 Client for creating and updating CWRC XML documents in GitHub through the GitHub API.  Used by the [CWRC-GitServer](jchartrand/CWRC-GitServer).
 
 Typical development on the server part of the CWRC-Writer will therefore be changes to the [CWRC-GitServer](https://github.com/jchartrand/CWRC-GitServer) and to [cwrcgit (NPM)](https://www.npmjs.com/package/cwrcgit).  Each  has it's own GitHub repository, listed above, with specifics about how to work with it.  General development practices are also listed below in [Development Process](#development).
