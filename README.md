@@ -12,7 +12,7 @@ Describes the overall organization of the CWRC-Writer code as NPM packages, and 
 
 ## Overview
 
-The CWRC-Writer is an in-browser WYSIWYG XML text editor that also supports standoff RDF annotation to mark references to named entities in the text.  There are two main parts to a CWRC-Writer installation that run more or less independently:  the CWRC-Writer editor itself that runs in the web browser, and the complementary backend services for document storage, XML validation, and entity lookup, that run on a server.  
+The CWRC-Writer is an in-browser WYSIWYG XML text editor that also supports standoff RDF annotation to mark references to named entities in the text.  There are two main parts to a CWRC-Writer installation that run more or less independently:  the CWRC-Writer editor itself that runs in the web browser, and the complementary backend services for document storage, XML validation, and entity lookup, that run on a server.  The best example of how to put together a full CWRC-Writer installation is our sandbox version, which is running here: [http://208.75.74.217](http://208.75.74.217) and whose code is available here:  [CWRC-GitWriter](https://github.com/jchartrand/CWRC-GitWriter).
 
 ## CWRC-Writer
 
