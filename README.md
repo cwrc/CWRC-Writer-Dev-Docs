@@ -417,13 +417,12 @@ Couple this with a watch, and it becomes that little bit easier to makes changes
 
 The build/test.js file can now be linked into an html file to allow us to play with the running code in a browser.
 
-6.  
-
 Okay, we’re pretty much setup.  Now commit to github, but follow this slightly different approach:
 
 Instead of:
 
-```git commit -m “some message”
+```
+git commit -m “some message”
 ```
 use:
 ```
