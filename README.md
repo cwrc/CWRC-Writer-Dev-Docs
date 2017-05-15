@@ -8,18 +8,18 @@ Describes the overall organization of the CWRC-Writer code as NPM packages, and 
 1. [Overview](#overview)
 1. [Editor](#editor)
 1. [Server](#server)
-1. [How to Work with CWRC packages](#how-to-work-with-cwrc-packages)
+1. [How to Develop with CWRC packages](#how-to-develop-with-cwrc-packages)
 1. [How to Create a CWRC package](#how-to-create-a-cwrc-package)
 
 ## Overview
 
-The CWRC-Writer is an in-browser WYSIWYG XML text editor that also supports standoff RDF annotation to mark references to named entities in the text.  There are two main parts to a CWRC-Writer installation that run more or less independently:  the CWRC-Writer editor itself that runs in the web browser, and the complementary backend services that run on a server, for document storage, XML validation, and entity lookup.  The best example of how to put together a full CWRC-Writer installation is our sandbox version, which is running here: [http://208.75.74.217](http://208.75.74.217) and whose code is available here:  [CWRC-GitWriter](https://github.com/jchartrand/CWRC-GitWriter).
+The CWRC-Writer is an in-browser WYSIWYG XML text editor that also enables standoff RDF annotation to mark references to named entities in the text, and to make textual annotations.  There are two main parts to a CWRC-Writer installation that run more or less independently:  the CWRC-Writer editor itself that runs in the web browser, and the complementary backend services that run on a server and provide document storage, XML validation, and entity lookup.  The best example of how to put together a full CWRC-Writer installation is our sandbox version, which is running here: [http://208.75.74.217](http://208.75.74.217) and whose code is available here:  [CWRC-GitWriter](https://github.com/jchartrand/CWRC-GitWriter).
 
 ## Editor
 
-An instance of the CWRC-Writer web editor is built around the [CWRC-WriterBase](https://www.npmjs.com/package/cwrc-writer-base), a heavily customized version of the [TinyMCE](https://www.tinymce.com) web editor.  The CWRC-WriterBase is used in conjunction with a few other modules:
+An instance of the CWRC-Writer web editor is built around the [CWRC-WriterBase](https://www.npmjs.com/package/cwrc-writer-base), a heavily customized version of the [TinyMCE](https://www.tinymce.com) web editor.  The CWRC-WriterBase is used in conjunction with a few other CWRC modules:
 
-#### StorageDialogs
+#### Storage Dialogs
 
 The CWRC-Writer editor ([CWRC-WriterBase](https://www.npmjs.com/package/cwrc-writer-base) running in the web browser) can be used with different backends for storage.  Your storage choice will likely require specific interactions with the end user, and so we've isolated the dialogs for loading and saving documents, allowing you to substitute your own dialogs.  The default dialogs for CWRC are in the [cwrc-git-dialogs](https://www.npmjs.com/package/cwrc-git-dialogs) and handle lists, loads, saves, and authentication to the default [CWRC-GitServer](https://www.npmjs.com/package/cwrc-git-server), which in turn makes calls to GitHub itself.
 
@@ -35,7 +35,9 @@ The editor also allows users to lookup references to named entities (people, pla
 
 The [CWRC-WriterBase](https://www.npmjs.com/package/cwrc-writer-base), the delegator, the entity lookups, and a few other components are organized as [NPM](https://www.npmjs.com) packages (and published to the [public npm repository](https://www.npmjs.com/search?q=cwrc) for use by anyone).  
 
-The NPM packages that contribute to the browser part of the CWRC-Writer are combined together using the node.js module loading system and with [Browserify](https://browserify.org).  We write code like we would for a node.js application (that would normally run on the server), using the node.js 'require' statements to import packages.  Browserify bundles all the code together (both our packages and all other packages we've included like jquery, bootstrap, and so on) into a single javascript file that can then be referenced in the index.html page of our web app.
+The NPM packages that contribute to the browser part of the CWRC-Writer are combined together using the node.js module loading system and with [Browserify](https://browserify.org).  We write code like we would for a node.js application (that would normally run on the server), using the node.js 'require' statements to import packages.  Browserify bundles all the code together (both our packages and all other packages we've included like jquery, bootstrap, and so on) into a single javascript file that can then be brought into the index.html page of our web app:
+
+```<script type="text/javascript" src="js/app.js"></script>```
 
 The best example of how the NPM packages are combined and browserified is in the [CWRC-GitWriter](https://github.com/jchartrand/CWRC-GitWriter) repository.  Specifically take a look at the [app.js](https://github.com/jchartrand/CWRC-GitWriter/blob/master/src/js/app.js) file, the so-called 'entry point' into the application, which is where Browserify starts and then 'crawls' the dependency tree to pull in all dependencies (as defined by 'require' statements).  The [app.js](https://github.com/jchartrand/CWRC-GitWriter/blob/master/src/js/app.js) file also shows how the 'require' statements are used to combine the CWRC-Writer javascript packages together, by passing them into the [CWRC-WriterBase](https://www.npmjs.com/package/cwrc-writer-base).
 
@@ -90,7 +92,7 @@ Typical development on the browser part of the CWRC-Writer will therefore be cha
 
 ## Server
 
-The server (or servers) provides services for storing documents, XML validation, and entity lookup.  The server can be implemented however one would like, and in particular, can be a more general server, or set of servers, used by other applications besides the CWRC-Writer.
+The server (or servers) provides services for storing documents, XML validation, and entity lookup.  The server(s) can be implemented however one would like, and in particular, can be a more general server, or set of servers, used by other applications besides the CWRC-Writer.  Some of the backend services could even be provided by a third party, like our default public entity lookup, provided by VIAF.  In any case, the services, needed are:
 
 #### Entity Lookup
 
@@ -102,21 +104,21 @@ The default XML validator is a public server supplied by CWRC.  The call to it i
 
 #### Document Storage
 
-The default backend server we use for storage is the [CWRC-GitServer](https://github.com/jchartrand/CWRC-GitServer), an Express.js server that in turn uses GitHub for storage.
+The default backend server we use for storage is the [CWRC-GitServer](https://github.com/jchartrand/CWRC-GitServer), an Express.js server that in turn uses GitHub for storage.  We don't make direct calls to GitHub from the browser because we use GitHub's OAuth, which requires that we run a server to recieve the OAuth callback from GitHub.
 
-There is one NPM CWRC package used by the [CWRC-GitServer](https://github.com/jchartrand/CWRC-GitServer):
+The [CWRC-GitServer](https://github.com/jchartrand/CWRC-GitServer) uses one other CWRC NPM package:
 
 * in NPM: [cwrcgit](https://www.npmjs.com/package/cwrcgit)
 * in GitHub: [CWRC-Git](https://github.com/jchartrand/CWRC-Git)
 Client for creating and updating CWRC XML documents in GitHub through the GitHub API.  Used by the [CWRC-GitServer](jchartrand/CWRC-GitServer).
 
-Typical development on the server part of the CWRC-Writer will therefore be changes to the [CWRC-GitServer](https://github.com/jchartrand/CWRC-GitServer) (probably to change [routes](https://expressjs.com/en/guide/routing.html)) and to[cwrcgit (NPM)](https://www.npmjs.com/package/cwrcgit).  Both have their own GitHub repository, listed above, with specifics about how to work with it.  General development practices are also listed below in [How to Work with CWRC packages](#how-to-work-with-cwrc-packages).
+Typical development on the server part of the CWRC-Writer will therefore be changes to the [CWRC-GitServer](https://github.com/jchartrand/CWRC-GitServer) (probably to change [routes](https://expressjs.com/en/guide/routing.html)) and to[cwrcgit (NPM)](https://www.npmjs.com/package/cwrcgit).  Both have their own GitHub repository, listed above, with specifics about how to work with it.  General development practices are also listed below in [How to Develop with CWRC packages](#how-to-work-with-develop-packages).
 
-## How to Work with CWRC Packages
+## How to Develop with CWRC Packages
 
 There are two types of package:  those that interact with the DOM are intended only to run in a web browser, and those that don't interact with the DOM and might run either in the web browser or on the server in node.js.  Both types of package are fundamentally the same, but we test the web packages differently.  The following steps apply to both types of package, with  different testing steps for the web packages outlined accordingly.
 
-#### Basic Setup
+#### Basic Development Setup
 
 * Fork or clone (depending on your role in the project) the relevant repo (i.e., one of the CWRC repos: CWRC-WRiterBase, CWRC-Git, etc.) to your local machine.
 
@@ -200,7 +202,7 @@ codecov.io also provides us with the code coverage badge at the top of this READ
 
 ##### NPM Publishing
 
-Finally the Travis build publishes a new version (if the commit was designated as a new feature or breaking change) to NPM:
+Finally the Travis build publishes a new version (if the commit was designated as a new feature or breaking change) to NPM, e.g:
 
 https://www.npmjs.com/package/cwrcgit
 
@@ -208,15 +210,15 @@ https://www.npmjs.com/package/cwrcgit
 
 ###### no DOM
 
-Testing of non-DOM (no interaction with a DOM, so can run either in browser or on server in node.js) packages is described in the [cwrc-git] package.
+Testing of non-DOM (no interaction with a DOM, so can run either in browser or on server in node.js) packages is described in the [cwrc-git](https://github.com/jchartrand/CWRC-Git) package.
 
 ###### DOM
 
-Testing of DOM packages is fully described in the [cwrc-git-dialogs] package.
+Testing of DOM packages is fully described in the [cwrc-git-dialogs](https://github.com/jchartrand/cwrc-git-dialogs) package.
 
 ###### REST API
 
-Testing of REST API calls is fully described in the [cwrc-git-server] package.
+Testing of REST API calls is fully described in the [CWRC-GitServer](https://github.com/jchartrand/CWRC-GitServer) package.
 
 ## How to Create a new CWRC Package
 
