@@ -6,6 +6,7 @@ CWRC-Writer-Dev-Docs
 Describes the overall organization of the CWRC-Writer code as NPM packages, and one approach to development for CWRC-Writer coding.
 
 1. [Overview](#overview)
+1. [Editor](#editor)
 1. [Server](#server)
 1. [How to Work with CWRC packages](#how-to-work-with-cwrc-packages)
 1. [How to Create a CWRC package](#how-to-create-a-cwrc-package)
@@ -14,11 +15,13 @@ Describes the overall organization of the CWRC-Writer code as NPM packages, and 
 
 The CWRC-Writer is an in-browser WYSIWYG XML text editor that also supports standoff RDF annotation to mark references to named entities in the text.  There are two main parts to a CWRC-Writer installation that run more or less independently:  the CWRC-Writer editor itself that runs in the web browser, and the complementary backend services that run on a server, for document storage, XML validation, and entity lookup.  The best example of how to put together a full CWRC-Writer installation is our sandbox version, which is running here: [http://208.75.74.217](http://208.75.74.217) and whose code is available here:  [CWRC-GitWriter](https://github.com/jchartrand/CWRC-GitWriter).
 
+## Editor
+
 An instance of the CWRC-Writer web editor is built around the [CWRC-WriterBase](https://www.npmjs.com/package/cwrc-writer-base), a heavily customized version of the [TinyMCE](https://www.tinymce.com) web editor.  The CWRC-WriterBase is used in conjunction with a few other modules:
 
 #### StorageDialogs
 
-The CWRC-Writer editor ([CWRC-WriterBase](https://www.npmjs.com/package/cwrc-writer-base) running in the web browser) can be used with different backends for storage.  Your storage choice will likely require specific interactions with the end user, and so we've isolated the dialogs for loading and saving documents, so that you can substitute your own dialogs.  The default dialogs for CWRC are in the [cwrc-git-dialogs](https://www.npmjs.com/package/cwrc-git-dialogs) and handle lists, loads, saves, and authentication to the default [CWRC-GitServer](https://www.npmjs.com/package/cwrc-git-server), which in turn makes calls to GitHub itself.)
+The CWRC-Writer editor ([CWRC-WriterBase](https://www.npmjs.com/package/cwrc-writer-base) running in the web browser) can be used with different backends for storage.  Your storage choice will likely require specific interactions with the end user, and so we've isolated the dialogs for loading and saving documents, allowing you to substitute your own dialogs.  The default dialogs for CWRC are in the [cwrc-git-dialogs](https://www.npmjs.com/package/cwrc-git-dialogs) and handle lists, loads, saves, and authentication to the default [CWRC-GitServer](https://www.npmjs.com/package/cwrc-git-server), which in turn makes calls to GitHub itself.
 
 #### Delegator
 
@@ -69,23 +72,25 @@ Dialogs for the [cwrc-writer-base](https://www.npmjs.com/package/cwrc-writer-bas
 * in GitHub: [CWRC-PublicEntityDialogs](https://github.com/jchartrand/CWRC-PublicEntityDialogs)
 
 ###### CWRCWriterLayout
-Components for customizing the CWRC-Writer layout.  This package is used by the layout-config.js file in an instance of the CWRC-Writer.  See (CWRC-GitWriter)[https://github.com/jchartrand/CWRC-GitWriter] for an example.  THIS PACKAGE IS DEPRECATED AND SHOULD NOT BE USED.  THE LAYOUT CODE HAS BEEN INCORPORATED DIRECTLY INTO THE CWRC-WRITER-BASE.
+Components for customizing the CWRC-Writer layout.  This package is used by the layout-config.js file in an instance of the CWRC-Writer.  See [CWRC-GitWriter](https://github.com/jchartrand/CWRC-GitWriter) for an example.  
+NOTE:  THIS PACKAGE IS DEPRECATED AND SHOULD NOT BE USED.  THE LAYOUT CODE HAS BEEN INCORPORATED DIRECTLY INTO THE CWRC-WRITER-BASE.
 
 * in NPM: [cwrc-writer-layout](https://www.npmjs.com/package/cwrc-writer-layout)
 * in GitHub: [CWRC-WriterLayout](https://github.com/jchartrand/CWRC-WriterLayout)
 
 ###### CWRCBasicDelegator
 
-Delegator to which the [cwrc-writer-base](https://www.npmjs.com/package/cwrc-writer-base) delegates server side calls for file creation in the file system on the server; entity lookups; schema retrieval; xml validation; template loading.  THIS PACKAGE IS DEPRECATED AND SHOULD NOT BE USED.
+Delegator to which the [cwrc-writer-base](https://www.npmjs.com/package/cwrc-writer-base) delegates server side calls for file creation in the file system on the server; entity lookups; schema retrieval; xml validation; template loading.  
+NOTE: THIS PACKAGE IS DEPRECATED AND SHOULD NOT BE USED.
 
 * in NPM: [cwrc-basic-delegator](https://www.npmjs.com/package/cwrc-basic-delegator)
 * in GitHub: [CWRC-BasicDelegator](https://github.com/jchartrand/CWRC-BasicDelegator)
 
-Typical development on the browser part of the CWRC-Writer will therefore be changes to the above packages.  Each package has it's own GitHub repository, listed above, with specifics about how to work with it.  General development practices are also listed below in [Development Process](#development).
+Typical development on the browser part of the CWRC-Writer will therefore be changes to the above packages.  Each package has it's own GitHub repository, listed above, with specifics about how to work with it.  General development practices are also listed below in [How to Work with CWRC packages](#how-to-work-with-cwrc-packages).
 
 ## Server
 
-The server provides services for storing documents, XML validation, and entity lookup.  The server can be implemented however one would like, and in particular, can be a more general server used by other applications besides the CWRC-Writer.
+The server (or servers) provides services for storing documents, XML validation, and entity lookup.  The server can be implemented however one would like, and in particular, can be a more general server, or set of servers, used by other applications besides the CWRC-Writer.
 
 #### Entity Lookup
 
@@ -105,7 +110,7 @@ There is one NPM CWRC package used by the [CWRC-GitServer](https://github.com/jc
 * in GitHub: [CWRC-Git](https://github.com/jchartrand/CWRC-Git)
 Client for creating and updating CWRC XML documents in GitHub through the GitHub API.  Used by the [CWRC-GitServer](jchartrand/CWRC-GitServer).
 
-Typical development on the server part of the CWRC-Writer will therefore be changes to the [CWRC-GitServer](https://github.com/jchartrand/CWRC-GitServer) (probably to change [routes](https://expressjs.com/en/guide/routing.html)) and to[cwrcgit (NPM)](https://www.npmjs.com/package/cwrcgit).  Both have their own GitHub repository, listed above, with specifics about how to work with it.  General development practices are also listed below in [Development Process](#development).
+Typical development on the server part of the CWRC-Writer will therefore be changes to the [CWRC-GitServer](https://github.com/jchartrand/CWRC-GitServer) (probably to change [routes](https://expressjs.com/en/guide/routing.html)) and to[cwrcgit (NPM)](https://www.npmjs.com/package/cwrcgit).  Both have their own GitHub repository, listed above, with specifics about how to work with it.  General development practices are also listed below in [How to Work with CWRC packages](#how-to-work-with-cwrc-packages).
 
 ## How to Work with CWRC Packages
 
@@ -131,39 +136,13 @@ Note that .gitignore doesn't ignore files that have been comitted, and the confi
 
 * write some code to satisfy new test
 
+NOTE:  most tests for the moment use mocha and chai, but we intend to move to TAPE.
+
 #### Commit to Github / Build in Travis / Release to NPM
 
-We use [commitizen](https://www.npmjs.com/package/commitizen), [Travis](https://travis-ci.org), [semantic-release-cli](https://www.npmjs.com/package/semantic-release-cli), [Istanbul](https://www.npmjs.com/package/istanbul), and [codecov.io](https://codecov.io) for our commits, builds, NPM releases, code coverage, and code coverage reporting.  This should all be mostly setup, but you may have to rerun some portions on your own machine.
+We use [commitizen](https://www.npmjs.com/package/commitizen), [Travis](https://travis-ci.org), [semantic-release](https://www.npmjs.com/package/semantic-release), [Istanbul](https://www.npmjs.com/package/istanbul), and [codecov.io](https://codecov.io) for our commits, builds, NPM releases, code coverage, and code coverage reporting.  This should all be mostly setup, but you may have to rerun some portions on your own machine.  For a full description of the setup see below [How to Create a CWRC package](#how-to-create-a-cwrc-package).
 
-First, make sure you've got NPM configured to publish to the NPM registry:
-
-```
-npm set init.author.name "James Chartrand"
-npm set init.author.email "jc.chartrand@gmail.com"
-npm set init.author.url "http://openskysolutions.ca"
-npm login  (answer prompts approriately)
-```
-then install semantic-release-cli globally (so you can run it from command line):
-
-`npm install -g semantic-release-cli`
-
-Run semantic release from the command line:
-
-`semantic-release-cli setup`
-
-which will ask you a series of questions, which at the time of writing this were:
-
-```
-semantic-release-cli setup
-? What is your npm registry? https://registry.npmjs.org/
-? What is your npm username? jchartrand
-? What is your npm password? *******
-? What is your GitHub username? jchartrand
-? What is your GitHub password? ********
-? What CI are you using? Travis CI
-```
-
-Semantic-release sets up a Travis build (on the Travis web site in the Travis account associated with the given Github username) and a trigger in GitHub to run the Travis build on the Travis site whenever you push a change to the GitHub repo.  The Travis build will in turn trigger semantic-release to deploy a new version to the NPM registry if the commited change is either a new feature or a breaking change.
+Semantic-release has set up a Travis build (on the Travis web site in the Travis account associated with the given Github username) and a trigger in GitHub to run the Travis build on the Travis site whenever you push a change to the GitHub repo.  The Travis build will in turn trigger semantic-release to deploy a new version to the NPM registry if the commited change is either a new feature or a breaking change.
 
 ##### Commits
 
@@ -233,7 +212,9 @@ Testing of changes to DOM elements is done with [https://www.npmjs.com/package/j
 
 ## How to Create a new CWRC Package
 
-There are two types of package:  those that interact with the DOM are intended only to run in a web browser, and those that don't interact with the DOM and might run either in the web browser or on the server in node.js.  Both types of package are fundamentally the same, but we test the web packages differently.  The following steps apply to both types of package, with the different testing steps for the web packages outlined accordingly.
+There are two types of package:  those that interact with the DOM are intended only to run in a web browser, and those that don't interact with the DOM and might run either in the web browser or on the server in node.js.  Both types of package are fundamentally the same, but we test the web packages differently.  The following steps apply to both types of package, with  different testing steps for the web packages outlined accordingly.
+
+##### Create Github repo
 
 create a new github repository in the cwrc account (from the cwrc github web page)
 	- as of this writing, choose GPL2.0 for the licence, and node for the .gitignore 
@@ -243,12 +224,16 @@ clone the repository to your local machine, e.g. from the directory in which you
 
 ```git clone git@github.com:cwrc/cwrc-somepackage.git```
 
+##### Initialize as NPM package
+
 switch into the newly created directory and initialize it as an NPM package:
 
 cd cwrc-somepackage
 npm init
 
 NPM will prompt you for a few things.  Answer appropriately.
+
+##### Install dependencies
 
 Install whatever NPM packages you need.  External NPM packages (from the NPM registry) can be used as:
 
@@ -268,83 +253,53 @@ You’d install whatever packages will be used by your new package like so (subs
 
 npm i -S jquery bootstrap  
 
-And finally install as a global:
+And finally install as a global, so it can be run from the command line:
 
 npm i -g semantic-release-cli 
 
-No run semantic-release-cli:
+##### Configure NPM settings
 
-```npm run semantic-release-cli```
+Now make sure you've got NPM configured to publish to the NPM registry:
 
-which will ask you a few questions, and will:
+```
+npm set init.author.name "James Chartrand"
+npm set init.author.email "jc.chartrand@gmail.com"
+npm set init.author.url "http://openskysolutions.ca"
+npm login  (answer prompts approriately)
+```
+
+##### Run semantic-release-cli
+
+
+```npm run semantic-release-cli setup```
+
+which will ask you a series of questions, which at the time of writing this were:
+
+```
+semantic-release-cli setup
+? What is your npm registry? https://registry.npmjs.org/
+? What is your npm username? jchartrand
+? What is your npm password? *******
+? What is your GitHub username? jchartrand
+? What is your GitHub password? ********
+? What CI are you using? Travis CI
+```
+
+Semantic release will:
 
 - create .travis.yml
 - login to travis and set github and npm tokens that allow semantic release to later tag a github release, and to publish to npm.
 
-Everything that semantic-release-cli does is described here:  https://github.com/semantic-release/cli#what-it-does
+Modify the .travis.yml that semantic-release-cli created so that script and after_success look like:
 
-4.  add commitizen option to package.json config property:
-
-"config": {
-    "commitizen": {
-      "path": "node_modules/cz-conventional-changelog"
-    }
-  }
-
-[cz-conventional-changelog](https://github.com/commitizen/cz-conventional-changelog) tells commitizen to structure our commits according to [this conventional changelog standard](https://github.com/conventional-changelog/conventional-changelog)
-
-5. add a precommit script to ‘scripts’:
-
-“scripts”: {
-	”precommit": "npm run test:single && npm run check-coverage"
-}
-
-[Husky](https://github.com/typicode/husky) (installed earlier) triggers this script whenever a commit is made to git.
-
-5.  add coverages script to package.json scripts:
-
-"check-coverage": "istanbul check-coverage --statements 0 --branches 0 --functions 0 --lines 0",
-"report-coverage": "cat ./coverage/lcov.info | codecov",
-  
-If our new package interacts with the DOM, then also add:
-
-"generate-coverage": "istanbul report --root coverage lcov",
-
-6.  add test scripts to package.json scripts:
-
-For non-DOM, our current packages use:
-
-"test": "mocha spec -w",
-"test:single": "istanbul cover -x *.test.js _mocha -- -R spec spec",
-
-but we’d like to move them to TAPE:
-
- "tape": "nyc tape test/main.js | tap-spec",
- "report": "nyc report --reporter=text-lcov > coverage.lcov && codecov",
-
-For DOM:
-
-"test:single": "npm run test:electron && npm generate-coverage",
-    "test:browser": "browserify -t browserify-istanbul test/browser.js | browser-run  -p 2222 --static .  | node test/extract-coverage.js | faucet",
-    "test:electron": "browserify -t browserify-istanbul test/browser.js | browser-run --static . | node test/extract-coverage.js | faucet ",
-    "test:chrome": "browserify -t browserify-istanbul test/browser.js | browser-run --static . -b chrome | node test/extract-coverage.js | faucet ",
-    
-7.  Add scripts to browserify code and thereby allow manually testing it directly in a web browser.  
-
-"browserify": "browserify test/manual.js -o build/test.js --debug -t [ babelify --presets [ es2015 ] ]",
-
-Couple this with a watch, and it becomes that little bit easier to makes changes to the source and see the result immediately in the browser (with a refresh - command-R):
-
- "watch": "watchify test/manual.js -o build/test.js --debug --verbose -t [ babelify --presets [ es2015 ] ]",
-
-6.  modify the .travis.yml that semantic-release-cli created so that script and after_success look like:
-
+```
 script:
   - npm run test:single
   - npm run check-coverage
 after_success:
   - npm run report-coverage
   - npm run semantic-release
+```
 
 The entries in ’script’ are run first.  If they pass, then the after_success scripts are run.  Report-coverage sends our coverage information to codecov.io.  The [semantic-release](https://github.com/semantic-release/semantic-release) script follows the [SemVer](http://semver.org/) spec, and:
  
@@ -353,6 +308,97 @@ The entries in ’script’ are run first.  If they pass, then the after_success
 - generates a changeling and tags our github repository with a new release
 
 Read more about semantic-release and how it works here:  [How Semantic Release works](https://github.com/semantic-release/semantic-release#how-does-it-work)
+Everything that semantic-release-cli does is described here:  https://github.com/semantic-release/cli#what-it-does
+
+##### Configure commitizen
+
+ Add a commitizen property to the package.json config property:
+
+```
+"config": {
+    "commitizen": {
+      "path": "node_modules/cz-conventional-changelog"
+    }
+  }
+```
+
+[cz-conventional-changelog](https://github.com/commitizen/cz-conventional-changelog) tells commitizen to structure our commits according to [this conventional changelog standard](https://github.com/conventional-changelog/conventional-changelog)
+
+##### Configure Husky
+
+ add a precommit script to ‘scripts’:
+
+```
+“scripts”: {
+	”precommit": "npm run test:single && npm run check-coverage"
+}
+```
+
+[Husky](https://github.com/typicode/husky) (installed earlier) triggers this script whenever a commit is made to git.  As you can see, it will run our tests and verify our test coverage.
+
+
+##### Add test scripts
+
+Add test scripts to the package.json 'scripts' property.
+
+For non-DOM, our current packages use:
+
+```
+"test": "mocha spec -w",
+"test:single": "istanbul cover -x *.test.js _mocha -- -R spec spec",
+```
+
+but we’d like to move them to TAPE:
+
+```
+ "tape": "nyc tape test/main.js | tap-spec",
+ ```
+
+For DOM packages:
+
+"test:single": "npm run test:electron && npm generate-coverage",
+    "test:browser": "browserify -t browserify-istanbul test/browser.js | browser-run  -p 2222 --static .  | node test/extract-coverage.js | faucet",
+    "test:electron": "browserify -t browserify-istanbul test/browser.js | browser-run --static . | node test/extract-coverage.js | faucet ",
+    "test:chrome": "browserify -t browserify-istanbul test/browser.js | browser-run --static . -b chrome | node test/extract-coverage.js | faucet ",
+
+##### Add coverage scripts 
+
+to package.json scripts:
+
+```
+"check-coverage": "istanbul check-coverage --statements 0 --branches 0 --functions 0 --lines 0",
+"report-coverage": "cat ./coverage/lcov.info | codecov",
+```
+
+  NOTE: if we move to TAPE and NYC, the report-coverage task will be:
+
+```
+  "report-coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov",
+```
+
+If our new package interacts with the DOM, then also add:
+
+```
+"generate-coverage": "istanbul report --root coverage lcov",
+```
+
+##### Setup browser development
+
+If the package is intended to run in the web browser, then we'd like to run the code while developing to see the effect of changes. So, we add scripts to browserify the code and thereby allow manually testing it directly in a web browser.  
+
+```
+"browserify": "browserify test/manual.js -o build/test.js --debug -t [ babelify --presets [ es2015 ] ]",
+```
+
+Couple this with a watch, and it becomes that little bit easier to makes changes to the source and see the result immediately in the browser (with a refresh - command-R):
+
+```
+ "watch": "watchify test/manual.js -o build/test.js --debug --verbose -t [ babelify --presets [ es2015 ] ]",
+```
+
+The build/test.js file can now be linked into an html file to allow us to play with the running code in a browser.
+
+6.  
 
 Okay, we’re pretty much setup.  Now commit to github, but follow this slightly different approach:
 
@@ -364,7 +410,7 @@ use:
 ```
 npm run commit
 ```
-which will prompt for various things with which to write the changelog, and will then try to commit.  This will trigger the husky scripts in precommit, which will run our tests and will confirm our test coverage meets our set limit.
+which will prompt for various things with which to write the changelog, and will then try to commit.  This will trigger the husky scripts in precommit, which will run our tests and will confirm that our test coverage meets our set limit.   
 
 
 
