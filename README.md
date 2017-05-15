@@ -353,53 +353,44 @@ When installed [Husky](https://github.com/typicode/husky) overwrites certain [gi
 
 [Husky](https://github.com/typicode/husky) triggers this script whenever a commit is made to git.  As you can see, it will run our tests and verify our test coverage.
 
-##### Add test scripts
+##### Add test and coverage scripts
 
-Add test scripts to the package.json 'scripts' property.
+Add the following to the package.json 'scripts' property.
 
-For non-DOM, our current packages use:
+###### non-DOM 
 
 ```
 "test": "mocha spec -w",
 "test:single": "istanbul cover -x *.test.js _mocha -- -R spec spec",
+"check-coverage": "istanbul check-coverage --statements 0 --branches 0 --functions 0 --lines 0",
+"report-coverage": "cat ./coverage/lcov.info | codecov",
 ```
 
-which runs tests and calculates test coverage on any tests is the 'spec' directly, but we’d like to move them to TAPE:
+which runs tests, calculates test coverage on any tests is the 'spec' directly, and sends the report to codecov.io
+
+But, we’d like to move our tests to TAPE:
 
 ```
  "tape": "nyc tape test/main.js | tap-spec",
+ "report-coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov"
  ```
 
 tap-spec formats the 'tap' output from tape.
 nyc is the new incarnation of istanbul and calclates test coverage
 
-For DOM packages:
+###### DOM
 
+Our DOM tests are all TAPE tests.
+
+```
 "test:single": "npm run test:electron && npm generate-coverage",
-    "test:browser": "browserify -t browserify-istanbul test/browser.js | browser-run  -p 2222 --static .  | node test/extract-coverage.js | faucet",
-    "test:electron": "browserify -t browserify-istanbul test/browser.js | browser-run --static . | node test/extract-coverage.js | faucet ",
-    "test:chrome": "browserify -t browserify-istanbul test/browser.js | browser-run --static . -b chrome | node test/extract-coverage.js | faucet ",
-
-##### Add coverage scripts 
-
-to package.json scripts:
-
-```
-"check-coverage": "istanbul check-coverage --statements 0 --branches 0 --functions 0 --lines 0",
-"report-coverage": "cat ./coverage/lcov.info | codecov",
+"test:browser": "browserify -t browserify-istanbul test/browser.js | browser-run  -p 2222 --static .  | node test/extract-coverage.js | faucet",
+"test:electron": "browserify -t browserify-istanbul test/browser.js | browser-run --static . | node test/extract-coverage.js | faucet ",
+"test:chrome": "browserify -t browserify-istanbul test/browser.js | browser-run --static . -b chrome | node test/extract-coverage.js | faucet ",
+"generate-coverage": "istanbul report --root coverage lcov"
 ```
 
-  NOTE: if we move to TAPE and NYC, the report-coverage task will be:
-
-```
-  "report-coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov",
-```
-
-If our new package interacts with the DOM, then also add:
-
-```
-"generate-coverage": "istanbul report --root coverage lcov",
-```
+A complete explantation of how we test in the browser and generate test coverage statistics (tricky!) is [here](https://github.com/jchartrand/cwrc-git-dialogs#testing)
 
 ##### Setup browser development
 
@@ -417,6 +408,8 @@ Couple this with a watch, and it becomes that little bit easier to makes changes
 
 The build/test.js file can now be linked into an html file to allow us to play with the running code in a browser.
 
+##### Commit
+
 Okay, we’re pretty much setup.  Now commit to github, but follow this slightly different approach:
 
 Instead of:
@@ -429,6 +422,8 @@ use:
 npm run commit
 ```
 which will prompt for various things with which to write the changelog, and will then try to commit.  This will trigger the husky scripts in precommit, which will run our tests and will confirm that our test coverage meets our set limit.
+
+##### Push to GitHub
 
 If all is well with the tests and coverage then
 
