@@ -114,6 +114,8 @@ Typical development on the server part of the CWRC-Writer will therefore be chan
 
 ## How to Work with CWRC Packages
 
+There are two types of package:  those that interact with the DOM are intended only to run in a web browser, and those that don't interact with the DOM and might run either in the web browser or on the server in node.js.  Both types of package are fundamentally the same, but we test the web packages differently.  The following steps apply to both types of package, with  different testing steps for the web packages outlined accordingly.
+
 #### Basic Setup
 
 * Fork or clone (depending on your role in the project) the relevant repo (i.e., one of the CWRC repos: CWRC-WRiterBase, CWRC-Git, etc.) to your local machine.
@@ -204,11 +206,17 @@ https://www.npmjs.com/package/cwrcgit
 
 ##### Testing
 
-Testing uses mocha and chai.  Tests are in the `spec` directory. 
+###### no DOM
 
-For modules that make http calls (e.g., the cwrcgit package, which makes calls to the GitHub API, including calls to create new repositories), rather than make those calls for every test, [nock](https://github.com/node-nock/nock) instead mocks the calls to GitHub (intercepts the calls and instead returns pre-recorded data).
+Testing of non-DOM (no interaction with a DOM, so can run either in browser or on server in node.js) packages is described in the [cwrc-git] package.
 
-Testing of changes to DOM elements is done with [https://www.npmjs.com/package/jsdom](https://www.npmjs.com/package/jsdom) within standard mocha tests.
+###### DOM
+
+Testing of DOM packages is fully described in the [cwrc-git-dialogs] package.
+
+###### REST API
+
+Testing of REST API calls is fully described in the [cwrc-git-server] package.
 
 ## How to Create a new CWRC Package
 
