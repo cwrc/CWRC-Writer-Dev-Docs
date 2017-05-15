@@ -3,7 +3,7 @@
 CWRC-Writer-Dev-Docs
 ====================
 
-Describes the overall organization of the CWRC-Writer code as NPM packages, and one approach to development for CWRC-Writer coding.
+Describes the overall organization of the CWRC-Writer code, how we use NPM, and one approach to development for CWRC-Writer coding.
 
 1. [Overview](#overview)
 1. [Editor](#editor)
@@ -112,11 +112,11 @@ The [CWRC-GitServer](https://github.com/jchartrand/CWRC-GitServer) uses one othe
 * in GitHub: [CWRC-Git](https://github.com/jchartrand/CWRC-Git)
 Client for creating and updating CWRC XML documents in GitHub through the GitHub API.  Used by the [CWRC-GitServer](jchartrand/CWRC-GitServer).
 
-Typical development on the server part of the CWRC-Writer will therefore be changes to the [CWRC-GitServer](https://github.com/jchartrand/CWRC-GitServer) (probably to change [routes](https://expressjs.com/en/guide/routing.html)) and to[cwrcgit (NPM)](https://www.npmjs.com/package/cwrcgit).  Both have their own GitHub repository, listed above, with specifics about how to work with it.  General development practices are also listed below in [How to Develop with CWRC packages](#how-to-work-with-develop-packages).
+Typical development on the server part of the CWRC-Writer will therefore be changes to the [CWRC-GitServer](https://github.com/jchartrand/CWRC-GitServer) (probably to change [routes](https://expressjs.com/en/guide/routing.html)) and to [cwrcgit](https://github.com/jchartrand/CWRCGit).  Both have their own GitHub repository (hyperlinked in the prior sentence) with specifics about how to work with it.  General development practices are also listed below in [How to Develop with CWRC packages](#how-to-work-with-develop-packages).
 
 ## How to Develop with CWRC Packages
 
-There are two types of package:  those that interact with the DOM are intended only to run in a web browser, and those that don't interact with the DOM and might run either in the web browser or on the server in node.js.  Both types of package are fundamentally the same, but we test the web packages differently.  The following steps apply to both types of package, with  different testing steps for the web packages outlined accordingly.
+There are two types of package:  those that interact with the DOM and are intended only to run in a web browser, and those that don't interact with the DOM and might run either in the web browser or on the server in node.js.  Both types of package are fundamentally the same, but we test the web packages differently.  The following steps apply to both types of package, with the different testing steps for the web packages marked accordingly.
 
 #### Basic Development Setup
 
@@ -134,25 +134,38 @@ Note that .gitignore doesn't ignore files that have been comitted, and the confi
 
 #### Test and code
 
-* write a test (or two) for your new feature (in 'spec' directory)
+* write a test (or two) for your new feature 
 
-* `npm test` to start mocha and automatically rerun the tests whenever you change a file
+* `npm test` to run the tests
 
 * write some code to satisfy new test
 
-NOTE:  most tests for the moment use mocha and chai, but we intend to move to TAPE.
+Depending on the type of package, different tests are used:
+
+###### no DOM no browswer no problem
+
+Testing of non-DOM (no interaction with the browser DOM, so can run either in browser or on server in node.js) packages is described in the [cwrc-git](https://github.com/jchartrand/CWRC-Git) package.
+
+###### DOM
+
+Testing of packages that interact with the browser DOM is described in the [cwrc-git-dialogs](https://github.com/jchartrand/cwrc-git-dialogs) package.
+
+###### REST API
+
+Testing of REST API calls is described in the [CWRC-GitServer](https://github.com/jchartrand/CWRC-GitServer) package.
+
 
 #### Commit to Github / Build in Travis / Release to NPM
 
-We use [commitizen](https://www.npmjs.com/package/commitizen), [Travis](https://travis-ci.org), [semantic-release](https://www.npmjs.com/package/semantic-release), [Istanbul](https://www.npmjs.com/package/istanbul), and [codecov.io](https://codecov.io) for our commits, builds, NPM releases, code coverage, and code coverage reporting.  This should all be mostly setup, but you may have to rerun some portions on your own machine.  For a full description of the setup see below [How to Create a CWRC package](#how-to-create-a-cwrc-package).
+We use [commitizen](https://www.npmjs.com/package/commitizen), [Travis](https://travis-ci.org), [semantic-release](https://www.npmjs.com/package/semantic-release), [Istanbul](https://www.npmjs.com/package/istanbul) (although Istanbul has just been subsumed into NYC so we'll soon have to update), and [codecov.io](https://codecov.io) for our commits, builds, NPM releases, code coverage, and code coverage reporting.  This should all be mostly setup when you clone the repository, but you may have to rerun some portions on your own machine.  For a full description of the setup see below [How to Create a CWRC package](#how-to-create-a-cwrc-package).
 
-Semantic-release has set up a Travis build (on the Travis web site in the Travis account associated with the given Github username) and a trigger in GitHub to run the Travis build on the Travis site whenever you push a change to the GitHub repo.  The Travis build will in turn trigger semantic-release to deploy a new version to the NPM registry if the commited change is either a new feature or a breaking change.
+Semantic-release will have set up a Travis build (on the Travis web site in the Travis account associated with the given Github username) and a trigger in GitHub to run the Travis build on the Travis site whenever you push a change to the GitHub repo.  The Travis build will in turn trigger semantic-release to deploy a new version to the NPM registry if the commited change is either a new feature or a breaking change.
 
 ##### Commits
 
-To submit a commit, stage your changes (e.g., git add -A) then instead of using git's commit command, use `npm run commit` which uses commitizen to create commits that are structured to adhere to the semantic-release conventions (the same conventions as those used by Google: https://github.com/angular/angular.js/blob/master/CONTRIBUTING.md#commit )
+To submit a commit, stage your changes (e.g., git add -A) then instead of using git's commit command, use `npm run commit` which uses commitizen to create commits that adhere to the semantic-release conventions (the same conventions as those used by Google: https://github.com/angular/angular.js/blob/master/CONTRIBUTING.md#commit )
 
-The NPM `ghooks` package is used to add two pre-commit git hooks that will check that all mocha tests pass and that code coverage is 100% (as caluclated by istanbul) before allowing a commit to proceed.  The hooks are set in package.json:
+The NPM `ghooks` package (ghooks has just been replaced by [husky](https://github.com/typicode/husky) so we'll soon have to upgrade) is used to add two pre-commit git hooks that will check that all tests pass and that code coverage is 100% (as caluclated by istanbul) before allowing a commit to proceed.  The hooks are set in package.json:
 
 ```
 "config": {
@@ -202,27 +215,19 @@ codecov.io also provides us with the code coverage badge at the top of this READ
 
 ##### NPM Publishing
 
-Finally the Travis build publishes a new version (if the commit was designated as a new feature or breaking change) to NPM, e.g:
+Finally the `npm run semantic-release` script, listed in the Travis after_success section, is triggered.
 
-https://www.npmjs.com/package/cwrcgit
+The [semantic-release](https://github.com/semantic-release/semantic-release) script follows the [SemVer](http://semver.org/) spec, and:
+ 
+- updates our version number in package.json, following the SemVer spec.
+- publishes a new version to NPM
+- generates a changeling and tags our github repository with a new release
 
-##### Testing
-
-###### no DOM
-
-Testing of non-DOM (no interaction with a DOM, so can run either in browser or on server in node.js) packages is described in the [cwrc-git](https://github.com/jchartrand/CWRC-Git) package.
-
-###### DOM
-
-Testing of DOM packages is fully described in the [cwrc-git-dialogs](https://github.com/jchartrand/cwrc-git-dialogs) package.
-
-###### REST API
-
-Testing of REST API calls is fully described in the [CWRC-GitServer](https://github.com/jchartrand/CWRC-GitServer) package.
+Read more about semantic-release and how it works here:  [How Semantic Release works](https://github.com/semantic-release/semantic-release#how-does-it-work)
 
 ## How to Create a new CWRC Package
 
-There are two types of package:  those that interact with the DOM are intended only to run in a web browser, and those that don't interact with the DOM and might run either in the web browser or on the server in node.js.  Both types of package are fundamentally the same, but we test the web packages differently.  The following steps apply to both types of package, with  different testing steps for the web packages outlined accordingly.
+There are two types of package:  those that interact with the DOM and are intended only to run in a web browser, and those that don't interact with the DOM and might run either in the web browser or on the server in node.js.  Both types of package are fundamentally the same, but we test the web packages differently.  The following steps apply to both types of package, with different testing steps for the web packages outlined accordingly.
 
 ##### Create Github repo
 
@@ -238,8 +243,10 @@ clone the repository to your local machine, e.g. from the directory in which you
 
 switch into the newly created directory and initialize it as an NPM package:
 
+```
 cd cwrc-somepackage
 npm init
+```
 
 NPM will prompt you for a few things.  Answer appropriately.
 
@@ -280,7 +287,6 @@ npm login  (answer prompts approriately)
 
 ##### Run semantic-release-cli
 
-
 ```npm run semantic-release-cli setup```
 
 which will ask you a series of questions, which at the time of writing this were:
@@ -311,13 +317,14 @@ after_success:
   - npm run semantic-release
 ```
 
-The entries in ’script’ are run first.  If they pass, then the after_success scripts are run.  Report-coverage sends our coverage information to codecov.io.  The [semantic-release](https://github.com/semantic-release/semantic-release) script follows the [SemVer](http://semver.org/) spec, and:
+The entries in ’script’ are run first.  If they both pass, then the after_success scripts are run.  Report-coverage sends our coverage information to codecov.io.  The [semantic-release](https://github.com/semantic-release/semantic-release) script follows the [SemVer](http://semver.org/) spec, and:
  
 - updates our version number in package.json, following the SemVer spec.
-- publishes a new version to npm
+- publishes a new version to NPM
 - generates a changeling and tags our github repository with a new release
 
 Read more about semantic-release and how it works here:  [How Semantic Release works](https://github.com/semantic-release/semantic-release#how-does-it-work)
+
 Everything that semantic-release-cli does is described here:  https://github.com/semantic-release/cli#what-it-does
 
 ##### Configure commitizen
@@ -332,11 +339,11 @@ Everything that semantic-release-cli does is described here:  https://github.com
   }
 ```
 
-[cz-conventional-changelog](https://github.com/commitizen/cz-conventional-changelog) tells commitizen to structure our commits according to [this conventional changelog standard](https://github.com/conventional-changelog/conventional-changelog)
+[cz-conventional-changelog](https://github.com/commitizen/cz-conventional-changelog) tells commitizen to structure our commits according to [AngularJS's commit message convention](https://github.com/angular/angular.js/blob/master/CONTRIBUTING.md#-git-commit-guidelines) also called the [conventional-changelog](https://github.com/conventional-changelog/conventional-changelog).
 
 ##### Configure Husky
 
- add a precommit script to ‘scripts’:
+When installed [Husky](https://github.com/typicode/husky) overwrites certain [github hooks](https://git-scm.com/docs/githooks) in the .git/hooks directory to trigger prenamed NPM scripts.  We use the 'precommit' hook. Add a precommit script to ‘scripts’:
 
 ```
 “scripts”: {
@@ -344,8 +351,7 @@ Everything that semantic-release-cli does is described here:  https://github.com
 }
 ```
 
-[Husky](https://github.com/typicode/husky) (installed earlier) triggers this script whenever a commit is made to git.  As you can see, it will run our tests and verify our test coverage.
-
+[Husky](https://github.com/typicode/husky) triggers this script whenever a commit is made to git.  As you can see, it will run our tests and verify our test coverage.
 
 ##### Add test scripts
 
@@ -358,11 +364,14 @@ For non-DOM, our current packages use:
 "test:single": "istanbul cover -x *.test.js _mocha -- -R spec spec",
 ```
 
-but we’d like to move them to TAPE:
+which runs tests and calculates test coverage on any tests is the 'spec' directly, but we’d like to move them to TAPE:
 
 ```
  "tape": "nyc tape test/main.js | tap-spec",
  ```
+
+tap-spec formats the 'tap' output from tape.
+nyc is the new incarnation of istanbul and calclates test coverage
 
 For DOM packages:
 
@@ -420,7 +429,15 @@ use:
 ```
 npm run commit
 ```
-which will prompt for various things with which to write the changelog, and will then try to commit.  This will trigger the husky scripts in precommit, which will run our tests and will confirm that our test coverage meets our set limit.   
+which will prompt for various things with which to write the changelog, and will then try to commit.  This will trigger the husky scripts in precommit, which will run our tests and will confirm that our test coverage meets our set limit.
+
+If all is well with the tests and coverage then
+
+```
+git push
+```
+
+it all up to github which will trigger Travis and hence run the tests and coverage checks again, and then run semantic release as described earlier.
 
 
 
