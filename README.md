@@ -260,19 +260,27 @@ Install whatever NPM packages you need.  External NPM packages (from the NPM reg
 
 When installing an NPM package indicate where it should go with either -D (development) -S(standard dependencies, i.e,. packages used by your new package), -g(install globally, usually to use as a command line tool).  For CWRC, we typically install:
 
+```
 npm i -D tape commitizen, cz-conventional-changelog, husky, semantic-release, codecov.io, instanbul
+```
 
 and for packages that are to be run on the browser:
 
+```
 npm i -D babel-preset-es2015 babelify browserify browserify-istanbul
+```
 
 You’d install whatever packages will be used by your new package like so (substitute whatever packages you’ll use, but you can install them anytime):
 
+```
 npm i -S jquery bootstrap  
+```
 
 And finally install as a global, so it can be run from the command line:
 
+```
 npm i -g semantic-release-cli 
+```
 
 ##### Configure NPM settings
 
