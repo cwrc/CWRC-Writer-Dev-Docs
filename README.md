@@ -227,7 +227,7 @@ Read more about semantic-release and how it works here:  [How Semantic Release w
 
 ## How to Create a new CWRC Package
 
-There are two types of package:  those that interact with the DOM and are intended only to run in a web browser, and those that don't interact with the DOM and might run either in the web browser or on the server in node.js.  Both types of package are fundamentally the same, but we test the web packages differently.  The following steps apply to both types of package, with different testing steps for the web packages outlined accordingly.
+There are two types of package:  those that interact with the DOM and are intended only to run in a web browser, and those that don't interact with the DOM and might run either in the web browser or on the server in node.js.  Both types of package are fundamentally the same, but we test them differently.  The following steps apply to both types of package, with different testing steps outlined accordingly.
 
 ##### Create Github repo
 
@@ -258,19 +258,21 @@ Install whatever NPM packages you need.  External NPM packages (from the NPM reg
 - as part of your own package (a dependency)
 - globally during development.  
 
-When installing an NPM package indicate where it should go with either -D (development) -S(standard dependencies, i.e,. packages used by your new package), -g(install globally, usually to use as a command line tool).  For CWRC, we typically install:
+When installing an NPM package indicate where it should go with either -D (development) -S(standard dependencies, i.e,. packages used by your new package), -g(install globally, usually to use as a command line tool).  
+
+For CWRC, we typically install the following development tools:
 
 ```
-npm i -D tape commitizen, cz-conventional-changelog, husky, semantic-release, codecov.io, instanbul
+npm i -D tape commitizen, cz-conventional-changelog, husky, semantic-release, codecov.io, nyc
 ```
 
-and for packages that are to be run on the browser:
+and for packages that are to be run on the browser also install:
 
 ```
 npm i -D babel-preset-es2015 babelify browserify browserify-istanbul
 ```
 
-You’d install whatever packages will be used by your new package like so (substitute whatever packages you’ll use, but you can install them anytime):
+You’d install whatever packages will be used by your new package (either to run on the server in Express.js or to be bundled up by browserify into the bundle that is sent down to the browser) like so (substitute whatever packages you’ll use, but you can install them anytime):
 
 ```
 npm i -S jquery bootstrap  
@@ -297,7 +299,7 @@ npm login  (answer prompts approriately)
 
 ```npm run semantic-release-cli setup```
 
-which will ask you a series of questions, which at the time of writing this were:
+which will ask you a series of questions, which at the time of writing were:
 
 ```
 semantic-release-cli setup
@@ -311,10 +313,10 @@ semantic-release-cli setup
 
 Semantic release will:
 
-- create .travis.yml
+- create .travis.yml (which tells Travis what NPM scripts to run as part of the build, which versions of node.js to use, etc.)
 - login to travis and set github and npm tokens that allow semantic release to later tag a github release, and to publish to npm.
 
-Modify the .travis.yml that semantic-release-cli created so that script and after_success look like:
+Modify the .travis.yml that semantic-release-cli created so that 'script' and 'after_success' look like:
 
 ```
 script:
@@ -325,15 +327,17 @@ after_success:
   - npm run semantic-release
 ```
 
-The entries in ’script’ are run first.  If they both pass, then the after_success scripts are run.  Report-coverage sends our coverage information to codecov.io.  The [semantic-release](https://github.com/semantic-release/semantic-release) script follows the [SemVer](http://semver.org/) spec, and:
+The entries in ’script’ are run first.  If they both pass, then the 'after_success' scripts are run.  Report-coverage sends our coverage information to codecov.io.  The [semantic-release](https://github.com/semantic-release/semantic-release) script follows the [SemVer](http://semver.org/) spec, and:
  
 - updates our version number in package.json, following the SemVer spec.
 - publishes a new version to NPM
-- generates a changeling and tags our github repository with a new release
+- generates a changelog and tags our github repository with a new release
 
 Read more about semantic-release and how it works here:  [How Semantic Release works](https://github.com/semantic-release/semantic-release#how-does-it-work)
 
 Everything that semantic-release-cli does is described here:  https://github.com/semantic-release/cli#what-it-does
+
+Note the difference between semantic-release-cli and semantic-release.  semantic-release-cli is run once on the command line to setup travis, etc.  semantic-release is run everytime a build is invoked on Travis.
 
 ##### Configure commitizen
 
@@ -376,33 +380,35 @@ Add the following to the package.json 'scripts' property.
 
 which runs tests, calculates test coverage on any tests is the 'spec' directly, and sends the report to codecov.io
 
-But, we’d like to move our tests to TAPE:
+The tests are mocha/chai, but we’d like to [TAPE](https://github.com/substack/tape), in which case the scripts would be:
 
 ```
  "tape": "nyc tape test/main.js | tap-spec",
  "report-coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov"
  ```
 
-tap-spec formats the 'tap' output from tape.
-nyc is the new incarnation of istanbul and calclates test coverage
+[tap-spec](https://www.npmjs.com/package/tap-spec) formats the [tap](https://testanything.org) output from [TAPE](https://github.com/substack/tape).  We might also use [faucet](https://www.npmjs.com/package/faucet) to format the output.
+
+[nyc](https://github.com/istanbuljs/nyc) is the new incarnation of [istanbul](https://github.com/gotwarlost/istanbul) and calclates test coverage.
 
 ###### DOM
 
-Our DOM tests are all TAPE tests.
+Our DOM tests are all [TAPE](https://github.com/substack/tape) tests.
 
 ```
 "test:single": "npm run test:electron && npm generate-coverage",
 "test:browser": "browserify -t browserify-istanbul test/browser.js | browser-run  -p 2222 --static .  | node test/extract-coverage.js | faucet",
 "test:electron": "browserify -t browserify-istanbul test/browser.js | browser-run --static . | node test/extract-coverage.js | faucet ",
 "test:chrome": "browserify -t browserify-istanbul test/browser.js | browser-run --static . -b chrome | node test/extract-coverage.js | faucet ",
-"generate-coverage": "istanbul report --root coverage lcov"
+"generate-coverage": "istanbul report --root coverage lcov",
+"report-coverage": "cat ./coverage/lcov.info | codecov"
 ```
 
 A complete explantation of how we test in the browser and generate test coverage statistics (tricky!) is [here](https://github.com/jchartrand/cwrc-git-dialogs#testing)
 
 ##### Setup browser development
 
-If the package is intended to run in the web browser, then we'd like to run the code while developing to see the effect of changes. So, we add scripts to browserify the code and thereby allow manually testing it directly in a web browser.  
+If the package is intended to run in the web browser, then we'd like to run the code while developing to see the effect of changes. So, we add an NPM script to browserify the code and thereby allow manually testing it directly in a web browser: 
 
 ```
 "browserify": "browserify test/manual.js -o build/test.js --debug -t [ babelify --presets [ es2015 ] ]",
@@ -429,17 +435,17 @@ use:
 ```
 npm run commit
 ```
-which will prompt for various things with which to write the changelog, and will then try to commit.  This will trigger the husky scripts in precommit, which will run our tests and will confirm that our test coverage meets our set limit.
+which will prompt for various things with which to write the changelog, and will then try to commit.  This will trigger the Git precommit hook, which in turn runs the husky scripts in .git/hooks/precommit, which will run our tests and confirm that our test coverage meets our set limit.  If all's well, the commit is made.
 
 ##### Push to GitHub
 
-If all is well with the tests and coverage then
+After successfully committing:
 
 ```
 git push
 ```
 
-it all up to github which will trigger Travis and hence run the tests and coverage checks again, and then run semantic release as described earlier.
+it all up to GitHub which will trigger Travis and hence run the tests and coverage checks again, and then run semantic release as described earlier.
 
 
 
