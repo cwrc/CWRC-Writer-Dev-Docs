@@ -57,6 +57,7 @@ Used by the [cwrc-writer-base](https://www.npmjs.com/package/cwrc-writer-base) t
 
 ###### CWRCGitDelegator
 Delegator to which [cwrc-writer-base](https://www.npmjs.com/package/cwrc-writer-base) delegates server-side calls.  Used by the [cwrc-writer-base](https://www.npmjs.com/package/cwrc-writer-base) to make calls to [CWRC-GitServer](https://github.com/jchartrand/CWRC-GitServer).
+NOTE:  THIS PACKAGE IS DEPRECATED AND SHOULD NOT BE USED.  PARTS HAve BEEN INCORPORATED DIRECTLY INTO THE CWRC-WRITER-BASE, and parts have been moved to [cwrc-git-dialogs](https://github.com/jchartrand/cwrc-git-dialogs).
 
 * in NPM: [cwrc-git-delegator](https://www.npmjs.com/package/cwrc-git-delegator)
 * in GitHub: [CWRC-GitDelegator](https://github.com/jchartrand/CWRC-GitDelegator)
@@ -92,7 +93,7 @@ Typical development on the browser part of the CWRC-Writer will therefore be cha
 
 ## Server
 
-The server (or servers) provides services for storing documents, XML validation, and entity lookup.  The server(s) can be implemented however one would like, and in particular, can be a more general server, or set of servers, used by other applications besides the CWRC-Writer.  Some of the backend services could even be provided by a third party, like our default public entity lookup, provided by VIAF.  In any case, the services, needed are:
+The server (or servers) provides services for storing documents, XML validation, and entity lookup.  The server(s) can be implemented however one would like, and in particular, can be a more general server, or set of servers, used by other applications besides the CWRC-Writer.  Some of the backend services could even be provided by a third party, like our default public entity lookup, provided by VIAF.  In any case the services needed are:
 
 #### Entity Lookup
 
@@ -163,7 +164,7 @@ Semantic-release will have set up a Travis build (on the Travis web site in the 
 
 ##### Commits
 
-To submit a commit, stage your changes (e.g., git add -A) then instead of using git's commit command, use `npm run commit` which uses commitizen to create commits that adhere to the semantic-release conventions (the same conventions as those used by Google: https://github.com/angular/angular.js/blob/master/CONTRIBUTING.md#commit )
+To submit a commit, stage your changes (e.g., git add -A) then instead of using git's commit command, use `npm run cm` (or in some cases the script name may be `commit` so run `npm run commit`.  Just check the scripts property of the package.json to confirm.) which uses commitizen to create commits that adhere to the semantic-release conventions (the same conventions as those used by Google: https://github.com/angular/angular.js/blob/master/CONTRIBUTING.md#commit )
 
 The NPM `ghooks` package (ghooks has just been replaced by [husky](https://github.com/typicode/husky) so we'll soon have to upgrade) is used to add two pre-commit git hooks that will check that all tests pass and that code coverage is 100% (as caluclated by istanbul) before allowing a commit to proceed.  The hooks are set in package.json:
 
@@ -235,7 +236,7 @@ create a new github repository in the cwrc account (from the cwrc github web pag
 	- as of this writing, choose GPL2.0 for the licence, and node for the .gitignore 
 	- choose to include a README or not - doesn't really matter, you can create one later
 
-clone the repository to your local machine, e.g. from the directory in which you'd like the new directory created:
+clone the repository to your local machine.  From the directory in which you'd like the new directory created:
 
 ```git clone git@github.com:cwrc/cwrc-somepackage.git```
 
@@ -248,7 +249,11 @@ cd cwrc-somepackage
 npm init
 ```
 
-NPM will prompt you for a few things.  Answer appropriately.
+NPM will prompt you for a few things.  
+
+For 'entry point: (index.js)' switch it to `src/index.js`.  For 'license' specify GPL-2.0
+
+Otherwise answer appropriately. 
 
 ##### Install dependencies
 
@@ -263,22 +268,30 @@ When installing an NPM package indicate where it should go with either -D (devel
 For CWRC, we typically install the following development tools:
 
 ```
-npm i -D tape commitizen, cz-conventional-changelog, husky, semantic-release, codecov.io, nyc
+npm i -D tape commitizen cz-conventional-changelog husky semantic-release codecov.io nyc watch faucet
 ```
 
 and for packages that are to be run on the browser also install:
 
 ```
-npm i -D babel-preset-es2015 babelify browserify browserify-istanbul
+npm i -D babel-preset-es2015 babelify browserify browserify-istanbul watchify concat-stream
 ```
 
-You’d install whatever packages will be used by your new package (either to run on the server in Express.js or to be bundled up by browserify into the bundle that is sent down to the browser) like so (substitute whatever packages you’ll use, but you can install them anytime):
+If the package makes http requests then you'll probably want to mock those calls to keep tests fast.  We've used [nock](https://github.com/node-nock/nock) for node.js:
+
+npm i -D nock
+
+and [sinon](http://sinonjs.org) for mocking in the browser:
+
+npm i -D sinon
+
+You’d also install whatever packages will be used by your new package (either to run on the server in Express.js or to be bundled up by browserify into the bundle that is sent down to the browser) but saving them as standard dependencies like so (substitute whatever packages you’ll use, but you can install them anytime):
 
 ```
 npm i -S jquery bootstrap  
 ```
 
-And finally install as a global, so it can be run from the command line:
+And finally install semantic-release-cli as a global, so it can be run from the command line:
 
 ```
 npm i -g semantic-release-cli 
@@ -297,7 +310,7 @@ npm login  (answer prompts approriately)
 
 ##### Run semantic-release-cli
 
-```npm run semantic-release-cli setup```
+```semantic-release-cli setup```
 
 which will ask you a series of questions, which at the time of writing were:
 
@@ -341,6 +354,12 @@ Note the difference between semantic-release-cli and semantic-release.  semantic
 
 ##### Configure commitizen
 
+Add a script to package.json 'scripts' property:
+
+```
+"commit": "git-cz",
+```
+
  Add a commitizen property to the package.json config property:
 
 ```
@@ -367,41 +386,58 @@ When installed [Husky](https://github.com/typicode/husky) overwrites certain [gi
 
 ##### Add test and coverage scripts
 
+All tests, both in node.js and in the browser, are [TAPE](https://github.com/substack/tape).
+
 Add the following to the package.json 'scripts' property.
 
 ###### non-DOM 
 
 ```
-"test": "mocha spec -w",
-"test:single": "istanbul cover -x *.test.js _mocha -- -R spec spec",
-"check-coverage": "istanbul check-coverage --statements 0 --branches 0 --functions 0 --lines 0",
-"report-coverage": "cat ./coverage/lcov.info | codecov",
+"test:single": "nyc tape test/main.js | tap-spec",
+"check-coverage": "nyc check-coverage --statements 0 --branches 0 --functions 0 --lines 0",
+"report-coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov"
 ```
 
-which runs tests, calculates test coverage on any tests is the 'spec' directly, and sends the report to codecov.io
-
-The tests are mocha/chai, but we’d like to [TAPE](https://github.com/substack/tape), in which case the scripts would be:
-
-```
- "tape": "nyc tape test/main.js | tap-spec",
- "report-coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov"
- ```
-
-[tap-spec](https://www.npmjs.com/package/tap-spec) formats the [tap](https://testanything.org) output from [TAPE](https://github.com/substack/tape).  We might also use [faucet](https://www.npmjs.com/package/faucet) to format the output.
+[tap-spec](https://www.npmjs.com/package/tap-spec) formats the [tap](https://testanything.org) output from [TAPE](https://github.com/substack/tape).  Could also use [faucet](https://www.npmjs.com/package/faucet) to format the output.
 
 [nyc](https://github.com/istanbuljs/nyc) is the new incarnation of [istanbul](https://github.com/gotwarlost/istanbul) and calclates test coverage.
 
 ###### DOM
-
-Our DOM tests are all [TAPE](https://github.com/substack/tape) tests.
 
 ```
 "test:single": "npm run test:electron && npm generate-coverage",
 "test:browser": "browserify -t browserify-istanbul test/browser.js | browser-run  -p 2222 --static .  | node test/extract-coverage.js | faucet",
 "test:electron": "browserify -t browserify-istanbul test/browser.js | browser-run --static . | node test/extract-coverage.js | faucet ",
 "test:chrome": "browserify -t browserify-istanbul test/browser.js | browser-run --static . -b chrome | node test/extract-coverage.js | faucet ",
-"generate-coverage": "istanbul report --root coverage lcov",
-"report-coverage": "cat ./coverage/lcov.info | codecov"
+"check-coverage": "nyc check-coverage --statements 0 --branches 0 --functions 0 --lines 0",
+"report-coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov"
+```
+
+Create a file test/extract-coverage.js containing:
+
+```
+'use strict'
+
+// from https://github.com/davidguttman/cssify/blob/master/test/extract-coverage.js
+
+var fs = require('fs')
+var path = require('path')
+var concatStream = require('concat-stream')
+
+var covPath = path.join(__dirname, '..', 'coverage', 'coverage.json')
+
+process.stdin.pipe(concatStream(function (input) {
+
+  input = input.toString('utf-8')
+  var sp = input.split('# coverage: ')
+  var output = sp[0]
+  var coverage = sp[1]
+  console.log(output)
+
+  fs.writeFile(covPath, coverage, function (err) {
+    if (err) console.error(err)
+  })
+}))
 ```
 
 A complete explantation of how we test in the browser and generate test coverage statistics (tricky!) is [here](https://github.com/jchartrand/cwrc-git-dialogs#testing)
@@ -414,13 +450,21 @@ If the package is intended to run in the web browser, then we'd like to run the 
 "browserify": "browserify test/manual.js -o build/test.js --debug -t [ babelify --presets [ es2015 ] ]",
 ```
 
-Couple this with a watch, and it becomes that little bit easier to makes changes to the source and see the result immediately in the browser (with a refresh - command-R):
+Couple this with a watch (using watchify, which is basically browserify with a watch), and it becomes that little bit easier to makes changes to the source and see the result immediately in the browser (with a refresh - command-R):
 
 ```
  "watch": "watchify test/manual.js -o build/test.js --debug --verbose -t [ babelify --presets [ es2015 ] ]",
 ```
 
-The build/test.js file can now be linked into an html file to allow us to play with the running code in a browser.
+The build/test.js file can now be linked into an html file to allow us to play with the running code in a browser.  An example index.html file is in the [cwrc-git-dialogs](https://github.com/jchartrand/cwrc-git-dialogs) project.
+
+##### Source
+
+Create a 'src' folder.  The 'entry point' into your new package is src/index.js  (as specified during 'npm init' and in the package.json for 'main').  This is where your code goes.  You can of course split your code out into other files that are required into index.js, but ideally the package is small enough that the source fits comfortably within the single index.js file.  If it gets unwieldy, consider splitting out a new package.
+
+##### Tests
+
+As mentioned earlier all tests are [TAPE](https://github.com/substack/tape).  
 
 ##### Commit
 
@@ -439,13 +483,15 @@ which will prompt for various things with which to write the changelog, and will
 
 ##### Push to GitHub
 
-After successfully committing:
+After successfully commiting:
 
 ```
 git push
 ```
 
 it all up to GitHub which will trigger Travis and hence run the tests and coverage checks again, and then run semantic release as described earlier.
+
+
 
 
 
