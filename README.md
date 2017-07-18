@@ -13,7 +13,7 @@ Describes the overall organization of the CWRC-Writer code, how we use NPM, and 
 
 ## Overview
 
-The CWRC-Writer is an in-browser WYSIWYG XML text editor that also enables standoff RDF annotation to mark references to named entities in the text, and to make textual annotations.  There are two main parts to a CWRC-Writer installation that run more or less independently:  the CWRC-Writer editor itself that runs in the web browser, and the complementary backend services that run on a server and provide document storage, XML validation, and entity lookup.  The best example of how to put together a full CWRC-Writer installation is our sandbox version, which is running here: [http://208.75.74.217](http://208.75.74.217) and whose code is available here:  [CWRC-GitWriter](https://github.com/jchartrand/CWRC-GitWriter).
+The CWRC-Writer is an in-browser WYSIWYG XML text editor that also enables standoff RDF annotation to mark references to named entities in the text, and to make textual annotations.  There are two main parts to a CWRC-Writer installation that run more or less independently:  the CWRC-Writer editor itself that runs in the web browser, and the complementary backend services that run on a server and provide document storage, XML validation, and entity lookup.  The best example of how to put together a full CWRC-Writer installation is our sandbox version, which is running here: [http://208.75.74.217](http://208.75.74.217) and whose code is available here:  [CWRC-GitWriter](https://github.com/cwrc/CWRC-GitWriter).
 
 ## Editor
 
@@ -39,7 +39,7 @@ The NPM packages that contribute to the browser part of the CWRC-Writer are comb
 
 ```<script type="text/javascript" src="js/app.js"></script>```
 
-The best example of how the NPM packages are combined and browserified is in the [CWRC-GitWriter](https://github.com/jchartrand/CWRC-GitWriter) repository.  Specifically take a look at the [app.js](https://github.com/jchartrand/CWRC-GitWriter/blob/master/src/js/app.js) file, the so-called 'entry point' into the application, which is where Browserify starts and then 'crawls' the dependency tree to pull in all dependencies (as defined by 'require' statements).  The [app.js](https://github.com/jchartrand/CWRC-GitWriter/blob/master/src/js/app.js) file also shows how the 'require' statements are used to combine the CWRC-Writer javascript packages together, by passing them into the [CWRC-WriterBase](https://www.npmjs.com/package/cwrc-writer-base).
+The best example of how the NPM packages are combined and browserified is in the [CWRC-GitWriter](https://github.com/cwrc/CWRC-GitWriter) repository.  Specifically take a look at the [app.js](https://github.com/cwrc/CWRC-GitWriter/blob/master/src/js/app.js) file, the so-called 'entry point' into the application, which is where Browserify starts and then 'crawls' the dependency tree to pull in all dependencies (as defined by 'require' statements).  The [app.js](https://github.com/cwrc/CWRC-GitWriter/blob/master/src/js/app.js) file also shows how the 'require' statements are used to combine the CWRC-Writer javascript packages together, by passing them into the [CWRC-WriterBase](https://www.npmjs.com/package/cwrc-writer-base).
 
 The CWRC NPM packages that are used in the browser:
 
@@ -47,39 +47,39 @@ The CWRC NPM packages that are used in the browser:
 The base class for the cwrc-writer.
 
 * in NPM: [cwrc-writer-base](https://www.npmjs.com/package/cwrc-writer-base)
-* in GitHub: [CWRC-WriterBase](https://github.com/jchartrand/CWRC-WriterBase)
+* in GitHub: [CWRC-WriterBase](https://github.com/cwrc/CWRC-WriterBase)
 
 ###### cwrc-git-dialogs
-Used by the [cwrc-writer-base](https://www.npmjs.com/package/cwrc-writer-base) to make calls to [CWRC-GitServer](https://github.com/jchartrand/CWRC-GitServer).
+Used by the [cwrc-writer-base](https://www.npmjs.com/package/cwrc-writer-base) to make calls to [CWRC-GitServer](https://github.com/cwrc/CWRC-GitServer).
 
 * in NPM: [cwrc-git-dialogs](https://www.npmjs.com/package/cwrc-git-dialogs)
-* in GitHub: [cwrc-git-dialogs](https://github.com/jchartrand/cwrc-git-dialogs)
+* in GitHub: [cwrc-git-dialogs](https://github.com/cwrc/cwrc-git-dialogs)
 
 ###### CWRCGitDelegator
-Delegator to which [cwrc-writer-base](https://www.npmjs.com/package/cwrc-writer-base) delegates server-side calls.  Used by the [cwrc-writer-base](https://www.npmjs.com/package/cwrc-writer-base) to make calls to [CWRC-GitServer](https://github.com/jchartrand/CWRC-GitServer).
-NOTE:  THIS PACKAGE IS DEPRECATED AND SHOULD NOT BE USED.  PARTS HAve BEEN INCORPORATED DIRECTLY INTO THE CWRC-WRITER-BASE, and parts have been moved to [cwrc-git-dialogs](https://github.com/jchartrand/cwrc-git-dialogs).
+Delegator to which [cwrc-writer-base](https://www.npmjs.com/package/cwrc-writer-base) delegates server-side calls.  Used by the [cwrc-writer-base](https://www.npmjs.com/package/cwrc-writer-base) to make calls to [CWRC-GitServer](https://github.com/cwrc/CWRC-GitServer).
+NOTE:  THIS PACKAGE IS DEPRECATED AND SHOULD NOT BE USED.  PARTS HAve BEEN INCORPORATED DIRECTLY INTO THE CWRC-WRITER-BASE, and parts have been moved to [cwrc-git-dialogs](https://github.com/cwrc/cwrc-git-dialogs).
 
 * in NPM: [cwrc-git-delegator](https://www.npmjs.com/package/cwrc-git-delegator)
-* in GitHub: [CWRC-GitDelegator](https://github.com/jchartrand/CWRC-GitDelegator)
+* in GitHub: [CWRC-GitDelegator](https://github.com/cwrc/CWRC-GitDelegator)
 
 ###### CWRC-GitServerClient
-Client for calls to the [CWRC-GitServer](https://github.com/jchartrand/CWRC-GitServer) from the [cwrc-git-delegator](https://www.npmjs.com/package/cwrc-git-delegator).
+Client for calls to the [CWRC-GitServer](https://github.com/cwrc/CWRC-GitServer) from the [cwrc-git-delegator](https://www.npmjs.com/package/cwrc-git-delegator).
 
 * in NPM: [cwrc-git-server-client](https://www.npmjs.com/package/cwrc-git-server-client)
-* in GitHub: [CWRC-GitServerClient](https://github.com/jchartrand/CWRC-GitServerClient)
+* in GitHub: [CWRC-GitServerClient](https://github.com/cwrc/CWRC-GitServerClient)
 
 ###### CWRCPublicEntityDialogs
 Dialogs for the [cwrc-writer-base](https://www.npmjs.com/package/cwrc-writer-base) that lookup people, places, organizations, and publications in public authority files.
 
 * in NPM: [cwrc-public-entity-dialogs](https://www.npmjs.com/package/cwrc-public-entity-dialogs)
-* in GitHub: [CWRC-PublicEntityDialogs](https://github.com/jchartrand/CWRC-PublicEntityDialogs)
+* in GitHub: [CWRC-PublicEntityDialogs](https://github.com/cwrc/CWRC-PublicEntityDialogs)
 
 ###### CWRCWriterLayout
-Components for customizing the CWRC-Writer layout.  This package is used by the layout-config.js file in an instance of the CWRC-Writer.  See [CWRC-GitWriter](https://github.com/jchartrand/CWRC-GitWriter) for an example.  
+Components for customizing the CWRC-Writer layout.  This package is used by the layout-config.js file in an instance of the CWRC-Writer.  See [CWRC-GitWriter](https://github.com/cwrc/CWRC-GitWriter) for an example.  
 NOTE:  THIS PACKAGE IS DEPRECATED AND SHOULD NOT BE USED.  THE LAYOUT CODE HAS BEEN INCORPORATED DIRECTLY INTO THE CWRC-WRITER-BASE.
 
 * in NPM: [cwrc-writer-layout](https://www.npmjs.com/package/cwrc-writer-layout)
-* in GitHub: [CWRC-WriterLayout](https://github.com/jchartrand/CWRC-WriterLayout)
+* in GitHub: [CWRC-WriterLayout](https://github.com/cwrc/CWRC-WriterLayout)
 
 ###### CWRCBasicDelegator
 
@@ -87,7 +87,7 @@ Delegator to which the [cwrc-writer-base](https://www.npmjs.com/package/cwrc-wri
 NOTE: THIS PACKAGE IS DEPRECATED AND SHOULD NOT BE USED.
 
 * in NPM: [cwrc-basic-delegator](https://www.npmjs.com/package/cwrc-basic-delegator)
-* in GitHub: [CWRC-BasicDelegator](https://github.com/jchartrand/CWRC-BasicDelegator)
+* in GitHub: [CWRC-BasicDelegator](https://github.com/cwrc/CWRC-BasicDelegator)
 
 Typical development on the browser part of the CWRC-Writer will therefore be changes to the above packages.  Each package has it's own GitHub repository, listed above, with specifics about how to work with it.  General development practices are also listed below in [How to Work with CWRC packages](#how-to-work-with-cwrc-packages).
 
@@ -105,15 +105,15 @@ The default XML validator is a public server supplied by CWRC.  The call to it i
 
 #### Document Storage
 
-The default backend server we use for storage is the [CWRC-GitServer](https://github.com/jchartrand/CWRC-GitServer), an Express.js server that in turn uses GitHub for storage.  We don't make direct calls to GitHub from the browser because we use GitHub's OAuth, which requires that we run a server to recieve the OAuth callback from GitHub.
+The default backend server we use for storage is the [CWRC-GitServer](https://github.com/cwrc/CWRC-GitServer), an Express.js server that in turn uses GitHub for storage.  We don't make direct calls to GitHub from the browser because we use GitHub's OAuth, which requires that we run a server to recieve the OAuth callback from GitHub.
 
-The [CWRC-GitServer](https://github.com/jchartrand/CWRC-GitServer) uses one other CWRC NPM package:
+The [CWRC-GitServer](https://github.com/cwrc/CWRC-GitServer) uses one other CWRC NPM package:
 
 * in NPM: [cwrcgit](https://www.npmjs.com/package/cwrcgit)
-* in GitHub: [CWRC-Git](https://github.com/jchartrand/CWRC-Git)
+* in GitHub: [CWRC-Git](https://github.com/cwrc/CWRC-Git)
 Client for creating and updating CWRC XML documents in GitHub through the GitHub API.  Used by the [CWRC-GitServer](jchartrand/CWRC-GitServer).
 
-Typical development on the server part of the CWRC-Writer will therefore be changes to the [CWRC-GitServer](https://github.com/jchartrand/CWRC-GitServer) (probably to change [routes](https://expressjs.com/en/guide/routing.html)) and to [cwrcgit](https://github.com/jchartrand/CWRCGit).  Both have their own GitHub repository (hyperlinked in the prior sentence) with specifics about how to work with it.  General development practices are also listed below in [How to Develop with CWRC packages](#how-to-work-with-develop-packages).
+Typical development on the server part of the CWRC-Writer will therefore be changes to the [CWRC-GitServer](https://github.com/cwrc/CWRC-GitServer) (probably to change [routes](https://expressjs.com/en/guide/routing.html)) and to [cwrcgit](https://github.com/cwrc/CWRCGit).  Both have their own GitHub repository (hyperlinked in the prior sentence) with specifics about how to work with it.  General development practices are also listed below in [How to Develop with CWRC packages](#how-to-work-with-develop-packages).
 
 ## How to Develop with CWRC Packages
 
@@ -145,15 +145,15 @@ Depending on the type of package, different tests are used:
 
 ###### no DOM no browswer no problem
 
-Testing of non-DOM (no interaction with the browser DOM, so can run either in browser or on server in node.js) packages is described in the [cwrc-git](https://github.com/jchartrand/CWRC-Git) package.
+Testing of non-DOM (no interaction with the browser DOM, so can run either in browser or on server in node.js) packages is described in the [cwrc-git](https://github.com/cwrc/CWRC-Git) package.
 
 ###### DOM
 
-Testing of packages that interact with the browser DOM is described in the [cwrc-git-dialogs](https://github.com/jchartrand/cwrc-git-dialogs) package.
+Testing of packages that interact with the browser DOM is described in the [cwrc-git-dialogs](https://github.com/cwrc/cwrc-git-dialogs) package.
 
 ###### REST API
 
-Testing of REST API calls is described in the [CWRC-GitServer](https://github.com/jchartrand/CWRC-GitServer) package.
+Testing of REST API calls is described in the [CWRC-GitServer](https://github.com/cwrc/CWRC-GitServer) package.
 
 
 #### Commit to Github / Build in Travis / Release to NPM
@@ -190,7 +190,7 @@ Of course, if the githooks that check tests and code coverage themselves passed,
 
 Results of the travis build are accessed using the github owner's name, and the repository name, like so:
 
-`https://travis-ci.org/jchartrand/CWRC-Git` 
+`https://travis-ci.org/cwrc/CWRC-Git` 
 
 ##### Code Coverage
 
@@ -204,7 +204,7 @@ after_success:
 
 report-coverage publishes the code coverage statistics to codecov.io where the coverage can be viewed:
 
-`https://codecov.io/gh/jchartrand/CWRC-Git/`
+`https://codecov.io/gh/cwrc/CWRC-Git/`
 
 You can also browse the code coverage reports locally by opening:
 
@@ -440,7 +440,7 @@ process.stdin.pipe(concatStream(function (input) {
 }))
 ```
 
-A complete explantation of how we test in the browser and generate test coverage statistics (tricky!) is [here](https://github.com/jchartrand/cwrc-git-dialogs#testing)
+A complete explantation of how we test in the browser and generate test coverage statistics (tricky!) is [here](https://github.com/cwrc/cwrc-git-dialogs#testing)
 
 ##### Setup browser development
 
@@ -456,7 +456,7 @@ Couple this with a watch (using watchify, which is basically browserify with a w
  "watch": "watchify test/manual.js -o build/test.js --debug --verbose -t [ babelify --presets [ es2015 ] ]",
 ```
 
-The build/test.js file can now be linked into an html file to allow us to play with the running code in a browser.  An example index.html file is in the [cwrc-git-dialogs](https://github.com/jchartrand/cwrc-git-dialogs) project.
+The build/test.js file can now be linked into an html file to allow us to play with the running code in a browser.  An example index.html file is in the [cwrc-git-dialogs](https://github.com/cwrc/cwrc-git-dialogs) project.
 
 ##### Source
 
