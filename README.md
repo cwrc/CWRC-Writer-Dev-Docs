@@ -358,14 +358,14 @@ Read more about semantic-release and how it works here:  [How Semantic Release w
 
 Everything that semantic-release-cli does is described here:  https://github.com/semantic-release/cli#what-it-does
 
-Note the difference between semantic-release-cli and semantic-release.  semantic-release-cli is run once on the command line to setup travis, etc.  semantic-release is run everytime a build is invoked on Travis.
+Note the difference between semantic-release-cli and semantic-release.  semantic-release-cli is run once on the command line to configure travis, the npm user, etc..  semantic-release is run everytime a build is invoked on Travis.
 
 ##### Configure commitizen
 
 Add a script to package.json 'scripts' property:
 
 ```
-"commit": "git-cz",
+"cm": "git-cz",
 ```
 
  Add a commitizen property to the package.json config property:
