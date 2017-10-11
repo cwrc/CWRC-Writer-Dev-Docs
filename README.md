@@ -9,7 +9,7 @@ Describes the overall organization of the CWRC-Writer code, how we use NPM, and 
 1. [Editor](#editor)
 1. [Server](#server)
 1. [How to Develop with CWRC packages](#how-to-develop-with-cwrc-packages)
-1. [How to Create a CWRC package](#how-to-create-a-cwrc-package)
+1. [How to Create a new CWRC package](#how-to-create-a-new-cwrc-package)
 
 ## Overview
 
@@ -158,7 +158,7 @@ Testing of REST API calls is described in the [CWRC-GitServer](https://github.co
 
 #### Commit to Github / Build in Travis / Release to NPM
 
-We use [commitizen](https://www.npmjs.com/package/commitizen), [Travis](https://travis-ci.org), [semantic-release](https://www.npmjs.com/package/semantic-release), [Istanbul](https://www.npmjs.com/package/istanbul) (although Istanbul has just been subsumed into NYC so we'll soon have to update), and [codecov.io](https://codecov.io) for our commits, builds, NPM releases, code coverage, and code coverage reporting.  This should all be mostly setup when you clone the repository, but you may have to rerun some portions on your own machine.  For a full description of the setup see below [How to Create a CWRC package](#how-to-create-a-cwrc-package).
+We use [commitizen](https://www.npmjs.com/package/commitizen), [Travis](https://travis-ci.org), [semantic-release](https://www.npmjs.com/package/semantic-release), [Istanbul](https://www.npmjs.com/package/istanbul) (although Istanbul has just been subsumed into NYC so we'll soon have to update), and [codecov.io](https://codecov.io) for our commits, builds, NPM releases, code coverage, and code coverage reporting.  This should all be mostly setup when you clone the repository, but you may have to rerun some portions on your own machine.  For a full description of the setup see below [How to Create a new CWRC package](#how-to-create-a-new-cwrc-package).
 
 Semantic-release-cli configures the corresponding Travis build (on the Travis web site in the Travis account associated with the given Github username) so that when the Travis build is triggered (whenever you push a change to the GitHub repo), Travis will run semantic-release, which will in turn:
 
