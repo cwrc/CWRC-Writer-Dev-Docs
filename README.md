@@ -23,23 +23,19 @@ An instance of the CWRC-Writer web editor is built around the [CWRC-WriterBase](
 
 The CWRC-Writer editor ([CWRC-WriterBase](https://www.npmjs.com/package/cwrc-writer-base) running in the web browser) can be used with different backends for storage.  Your storage choice will likely require specific interactions with the end user, and so we've isolated the dialogs for loading and saving documents, allowing you to substitute your own dialogs.  The default dialogs for CWRC are in the [cwrc-git-dialogs](https://www.npmjs.com/package/cwrc-git-dialogs) and handle lists, loads, saves, and authentication to the default [CWRC-GitServer](https://www.npmjs.com/package/cwrc-git-server), which in turn makes calls to GitHub itself.
 
-#### Delegator
-
-Other backend services are called through a javascript object that we've called the 'Delegator' (because the editor 'delegates' server side requests to it).  The delegator currently handles requests to validate XML documents.  The delegator essentially forwards requests on to the server to carry out the actual request.  NOTE:  we will likely soon rename the delegator as Validator since that's all it now does.  At one point it handled calls to all backend services, but now only to the XML Validator.  Moving towards more modular code, we've separated out the original delegator into smaller packages.
-
 #### Entity Lookup
 
-The editor also allows users to lookup references to named entities (people, places, organizations) and so another javascript object, much like the delegator, is also packaged in with the [CWRC-WriterBase](https://www.npmjs.com/package/cwrc-writer-base), and handles entity lookup. The default entity lookup package is [cwrc-public-entity-dialogs](https://www.npmjs.com/package/cwrc-public-entity-dialogs) which looks up named entities in [VIAF](https://viaf.org) and returns unique URIs for the selected entity.
+The editor also allows users to lookup references to named entities (people, places, organizations). The default entity lookup package is [cwrc-public-entity-dialogs](https://www.npmjs.com/package/cwrc-public-entity-dialogs) which looks up named entities and returns unique URIs for the selected entity. This package uses a modular approach so that lookup sources can be easily added. Some of the available sources are [VIAF](https://viaf.org), [Wikidata](https://www.wikidata.org), and [Geonames](http://www.geonames.org/). You can find the modules for these sources here: [viaf-entity-lookup](https://www.npmjs.com/package/viaf-entity-lookup), [wikidata-entity-lookup](https://www.npmjs.com/package/wikidata-entity-lookup), [geonames-entity-lookup](https://www.npmjs.com/package/geonames-entity-lookup).
 
 #### NPM packages and browserify
 
-The [CWRC-WriterBase](https://www.npmjs.com/package/cwrc-writer-base), the delegator, the entity lookups, and a few other components are organized as [NPM](https://www.npmjs.com) packages (and published to the [public npm repository](https://www.npmjs.com/search?q=cwrc) for use by anyone).  
+The [CWRC-WriterBase](https://www.npmjs.com/package/cwrc-writer-base), the entity lookups, and a few other components are organized as [NPM](https://www.npmjs.com) packages (and published to the [public npm repository](https://www.npmjs.com/search?q=cwrc) for use by anyone).  
 
-The NPM packages that contribute to the browser part of the CWRC-Writer are combined together using the node.js module loading system and with [Browserify](https://browserify.org).  We write code like we would for a node.js application (that would normally run on the server), using the node.js 'require' statements to import packages.  Browserify bundles all the code together (both our packages and all other packages we've included like jquery, bootstrap, and so on) into a single javascript file that can then be brought into the index.html page of our web app:
+The NPM packages that contribute to the browser part of the CWRC-Writer are combined together using the node.js module loading system and with [Browserify](https://browserify.org).  We write code like we would for a node.js application (that would normally run on the server), using the node.js `require` statements to import packages.  Browserify bundles all the code together (both our packages and all other packages we've included like jquery, bootstrap, and so on) into a single javascript file that can then be brought into the index.html page of our web app:
 
 ```<script type="text/javascript" src="js/app.js"></script>```
 
-The best example of how the NPM packages are combined and browserified is in the [CWRC-GitWriter](https://github.com/cwrc/CWRC-GitWriter) repository.  Specifically take a look at the [app.js](https://github.com/cwrc/CWRC-GitWriter/blob/master/src/js/app.js) file, the so-called 'entry point' into the application, which is where Browserify starts and then 'crawls' the dependency tree to pull in all dependencies (as defined by 'require' statements).  The [app.js](https://github.com/cwrc/CWRC-GitWriter/blob/master/src/js/app.js) file also shows how the 'require' statements are used to combine the CWRC-Writer javascript packages together, by passing them into the [CWRC-WriterBase](https://www.npmjs.com/package/cwrc-writer-base).
+The best example of how the NPM packages are combined and browserified is in the [CWRC-GitWriter](https://github.com/cwrc/CWRC-GitWriter) repository.  Specifically take a look at the [app.js](https://github.com/cwrc/CWRC-GitWriter/blob/master/src/js/app.js) file, the so-called 'entry point' into the application, which is where Browserify starts and then 'crawls' the dependency tree to pull in all dependencies (as defined by `require` statements).  The [app.js](https://github.com/cwrc/CWRC-GitWriter/blob/master/src/js/app.js) file also shows how the `require` statements are used to combine the CWRC-Writer javascript packages together, by passing them into the [CWRC-WriterBase](https://www.npmjs.com/package/cwrc-writer-base).
 
 The CWRC NPM packages that are used in the browser:
 
@@ -55,15 +51,8 @@ Used by the [cwrc-writer-base](https://www.npmjs.com/package/cwrc-writer-base) t
 * in NPM: [cwrc-git-dialogs](https://www.npmjs.com/package/cwrc-git-dialogs)
 * in GitHub: [cwrc-git-dialogs](https://github.com/cwrc/cwrc-git-dialogs)
 
-###### CWRCGitDelegator
-Delegator to which [cwrc-writer-base](https://www.npmjs.com/package/cwrc-writer-base) delegates server-side calls.  Used by the [cwrc-writer-base](https://www.npmjs.com/package/cwrc-writer-base) to make calls to [CWRC-GitServer](https://github.com/cwrc/CWRC-GitServer).
-NOTE:  THIS PACKAGE IS DEPRECATED AND SHOULD NOT BE USED.  PARTS HAve BEEN INCORPORATED DIRECTLY INTO THE CWRC-WRITER-BASE, and parts have been moved to [cwrc-git-dialogs](https://github.com/cwrc/cwrc-git-dialogs).
-
-* in NPM: [cwrc-git-delegator](https://www.npmjs.com/package/cwrc-git-delegator)
-* in GitHub: [CWRC-GitDelegator](https://github.com/cwrc/CWRC-GitDelegator)
-
 ###### CWRC-GitServerClient
-Client for calls to the [CWRC-GitServer](https://github.com/cwrc/CWRC-GitServer) from the [cwrc-git-delegator](https://www.npmjs.com/package/cwrc-git-delegator).
+Client for calls to the [CWRC-GitServer](https://github.com/cwrc/CWRC-GitServer) from the [cwrc-git-dialogs](https://www.npmjs.com/package/cwrc-git-dialogs).
 
 * in NPM: [cwrc-git-server-client](https://www.npmjs.com/package/cwrc-git-server-client)
 * in GitHub: [CWRC-GitServerClient](https://github.com/cwrc/CWRC-GitServerClient)
@@ -73,23 +62,6 @@ Dialogs for the [cwrc-writer-base](https://www.npmjs.com/package/cwrc-writer-bas
 
 * in NPM: [cwrc-public-entity-dialogs](https://www.npmjs.com/package/cwrc-public-entity-dialogs)
 * in GitHub: [CWRC-PublicEntityDialogs](https://github.com/cwrc/CWRC-PublicEntityDialogs)
-
-###### CWRCWriterLayout
-Components for customizing the CWRC-Writer layout.  This package is used by the layout-config.js file in an instance of the CWRC-Writer.  See [CWRC-GitWriter](https://github.com/cwrc/CWRC-GitWriter) for an example.  
-NOTE:  THIS PACKAGE IS DEPRECATED AND SHOULD NOT BE USED.  THE LAYOUT CODE HAS BEEN INCORPORATED DIRECTLY INTO THE CWRC-WRITER-BASE.
-
-* in NPM: [cwrc-writer-layout](https://www.npmjs.com/package/cwrc-writer-layout)
-* in GitHub: [CWRC-WriterLayout](https://github.com/cwrc/CWRC-WriterLayout)
-
-###### CWRCBasicDelegator
-
-Delegator to which the [cwrc-writer-base](https://www.npmjs.com/package/cwrc-writer-base) delegates server side calls for file creation in the file system on the server; entity lookups; schema retrieval; xml validation; template loading.  
-NOTE: THIS PACKAGE IS DEPRECATED AND SHOULD NOT BE USED.
-
-* in NPM: [cwrc-basic-delegator](https://www.npmjs.com/package/cwrc-basic-delegator)
-* in GitHub: [CWRC-BasicDelegator](https://github.com/cwrc/CWRC-BasicDelegator)
-
-Typical development on the browser part of the CWRC-Writer will therefore be changes to the above packages.  Each package has it's own GitHub repository, listed above, with specifics about how to work with it.  General development practices are also listed below in [How to Work with CWRC packages](#how-to-work-with-cwrc-packages).
 
 ## Server
 
@@ -101,19 +73,19 @@ The default lookup for the CWRC-Writer is an example of a general service that i
 
 #### XML Validation
 
-The default XML validator is a public server supplied by CWRC.  The call to it is in the default delegator: [cwrc-git-delegator (NPM)](https://www.npmjs.com/package/cwrc-git-delegator).  If you are implementing your own delegator, you'll probably want to use the same call to the CWRC validation server.  The XML validator is another example of a general service that isn't specific to CWRC-Writer.
+The default XML validator is a public server supplied by CWRC and the call to it is handled by the CWRC-WriterBase.  If you are implementing your own validator, you can specify the URL for it using the `validationUrl` property in the CWRC-WriterBase config. However, you will also need to re-implement the [validation module](https://github.com/cwrc/CWRC-WriterBase/blob/master/src/js/layout/modules/validation.js) or ensure that your service returns the same XML that's expected by it.
 
 #### Document Storage
 
-The default backend server we use for storage is the [CWRC-GitServer](https://github.com/cwrc/CWRC-GitServer), an Express.js server that in turn uses GitHub for storage.  We don't make direct calls to GitHub from the browser because we use GitHub's OAuth, which requires that we run a server to recieve the OAuth callback from GitHub.
+The default backend server we use for storage is the [CWRC-GitServer](https://github.com/cwrc/CWRC-GitServer), an Express.js server that in turn uses GitHub for storage.  We don't make direct calls to GitHub from the browser because we use GitHub's OAuth, which requires that we run a server to receive the OAuth callback from GitHub.
 
 The [CWRC-GitServer](https://github.com/cwrc/CWRC-GitServer) uses one other CWRC NPM package:
 
 * in NPM: [cwrcgit](https://www.npmjs.com/package/cwrcgit)
 * in GitHub: [CWRC-Git](https://github.com/cwrc/CWRC-Git)
-Client for creating and updating CWRC XML documents in GitHub through the GitHub API.  Used by the [CWRC-GitServer](jchartrand/CWRC-GitServer).
+Client for creating and updating CWRC XML documents in GitHub through the GitHub API.  Used by the [CWRC-GitServer](https://github.com/cwrc/CWRC-GitServer).
 
-Typical development on the server part of the CWRC-Writer will therefore be changes to the [CWRC-GitServer](https://github.com/cwrc/CWRC-GitServer) (probably to change [routes](https://expressjs.com/en/guide/routing.html)) and to [cwrcgit](https://github.com/cwrc/CWRCGit).  Both have their own GitHub repository (hyperlinked in the prior sentence) with specifics about how to work with it.  General development practices are also listed below in [How to Develop with CWRC packages](#how-to-work-with-develop-packages).
+Typical development on the server part of the CWRC-Writer will therefore be changes to the [CWRC-GitServer](https://github.com/cwrc/CWRC-GitServer) (probably to change [routes](https://expressjs.com/en/guide/routing.html)) and to [cwrcgit](https://github.com/cwrc/CWRC-Git).  Both have their own GitHub repository (hyperlinked in the prior sentence) with specifics about how to work with it.  General development practices are also listed below in [How to Develop with CWRC packages](#how-to-develop-with-cwrc-packages).
 
 ## How to Develop with CWRC Packages
 
