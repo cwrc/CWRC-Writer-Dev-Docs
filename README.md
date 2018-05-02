@@ -93,7 +93,7 @@ There are two types of package:  those that interact with the DOM and are intend
 
 #### Basic Development Setup
 
-* Fork or clone (depending on your role in the project) the relevant repo (i.e., one of the CWRC repos: CWRC-WRiterBase, CWRC-Git, etc.) to your local machine.
+* Fork or clone (depending on your role in the project) the relevant repo (i.e., one of the CWRC repos: CWRC-WriterBase, CWRC-Git, etc.) to your local machine.
 
 * `npm install` to install the node.js dependencies 
 	
@@ -130,7 +130,7 @@ Testing of REST API calls is described in the [CWRC-GitServer](https://github.co
 
 #### Commit to Github / Build in Travis / Release to NPM
 
-We use [commitizen](https://www.npmjs.com/package/commitizen), [Travis](https://travis-ci.org), [semantic-release](https://www.npmjs.com/package/semantic-release), [Istanbul](https://www.npmjs.com/package/istanbul) (although Istanbul has just been subsumed into NYC so we'll soon have to update), and [codecov.io](https://codecov.io) for our commits, builds, NPM releases, code coverage, and code coverage reporting.  This should all be mostly setup when you clone the repository, but you may have to rerun some portions on your own machine.  For a full description of the setup see below [How to Create a CWRC package](#how-to-create-a-cwrc-package).
+We use [commitizen](https://www.npmjs.com/package/commitizen), [Travis](https://travis-ci.org), [semantic-release](https://www.npmjs.com/package/semantic-release), [Istanbul](https://www.npmjs.com/package/istanbul) (although Istanbul has just been subsumed into NYC so we'll soon have to update), and [codecov.io](https://codecov.io) for our commits, builds, NPM releases, code coverage, and code coverage reporting.  This should all be mostly setup when you clone the repository, but you may have to rerun some portions on your own machine.  For a full description of the setup see below [How to Create a new CWRC package](#how-to-create-a-new-cwrc-package).
 
 Semantic-release-cli configures the corresponding Travis build (on the Travis web site in the Travis account associated with the given Github username) so that when the Travis build is triggered (whenever you push a change to the GitHub repo), Travis will run semantic-release, which will in turn:
 
@@ -144,23 +144,15 @@ A full description of what semantic-release itself does is [here](https://github
 
 ##### Commits
 
-To submit a commit, stage your changes (e.g., git add -A) then instead of using git's commit command, use `npm run cm` (or in some cases the script name may be `commit` so run `npm run commit`.  Just check the scripts property of the package.json to confirm.) which uses commitizen to create commits that adhere to the semantic-release conventions (the same conventions as those used by Google: https://github.com/angular/angular.js/blob/master/CONTRIBUTING.md#commit )
+To submit a commit, stage your changes (e.g. `git add -A`) then instead of using git's commit command, use `npm run cm` (or in some cases the script name may be `commit` so run `npm run commit`.  Just check the scripts property of the package.json to confirm.) which uses commitizen to create commits that adhere to the semantic-release conventions (the same conventions as those used by Google: https://github.com/angular/angular.js/blob/master/CONTRIBUTING.md#commit )
 
-The NPM `ghooks` package (ghooks has just been replaced by [husky](https://github.com/typicode/husky) so we'll soon have to upgrade) is used to add two pre-commit git hooks that will check that all tests pass and that code coverage is 100% (as caluclated by istanbul) before allowing a commit to proceed.  The hooks are set in package.json:
-
-```
-"config": {
-    "ghooks": {
-      "pre-commit": "npm run test:single && npm run check-coverage"
-    }
-  }
-```
+The NPM `husky` package is used to add two pre-commit git hooks that will check that all tests pass and that code coverage is 100% (as calculated by istanbul) before allowing a commit to proceed.
 
 After the commit has succeeded then `git push` it all up to github, which will trigger the Travis build.  The Travis build is also set to confirm that all tests pass and that code coverage is 100%.  This is set in the `.travis.yml` file like so:
 
 ```
 script:
-  - npm run test:single
+  - npm run test
   - npm run check-coverage
 ```
 
@@ -179,7 +171,7 @@ After the Travis build finishes (successfully), Travis triggers two of our NPM s
 ```
 after_success:
   - npm run report-coverage
-  - npm run semantic-release
+  - npm run travis-deploy-once "npm run semantic-release"
 ```
 
 report-coverage publishes the code coverage statistics to codecov.io where the coverage can be viewed:
