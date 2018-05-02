@@ -204,17 +204,15 @@ There are two types of package:  those that interact with the DOM and are intend
 
 ##### Create Github repo
 
-create a new github repository in the cwrc account (from the cwrc github web page)
-	- as of this writing, choose GPL2.0 for the licence, and node for the .gitignore 
-	- choose to include a README or not - doesn't really matter, you can create one later
+Create a new github repository in the cwrc account (from the [cwrc github web page](https://github.com/cwrc/)). As of this writing, choose GPL2.0 for the licence, and node for the .gitignore.
 
-clone the repository to your local machine.  From the directory in which you'd like the new directory created:
+Clone the repository to your local machine.  From the directory in which you'd like the new directory created:
 
 ```git clone git@github.com:cwrc/cwrc-somepackage.git```
 
 ##### Initialize as NPM package
 
-switch into the newly created directory and initialize it as an NPM package:
+Switch into the newly created directory and initialize it as an NPM package:
 
 ```
 cd cwrc-somepackage
@@ -235,7 +233,7 @@ Install whatever NPM packages you need.  External NPM packages (from the NPM reg
 - as part of your own package (a dependency)
 - globally during development.  
 
-When installing an NPM package indicate where it should go with either -D (development) -S(standard dependencies, i.e,. packages used by your new package), -g(install globally, usually to use as a command line tool).  
+When installing an NPM package indicate where it should go with either -D (development) -S (standard dependencies, i.e,. packages used by your new package), -g (install globally, usually to use as a command line tool).  
 
 For CWRC, we typically install the following development tools:
 
@@ -251,11 +249,15 @@ npm i -D babel-preset-es2015 babelify browserify browserify-istanbul watchify co
 
 If the package makes http requests then you'll probably want to mock those calls to keep tests fast.  We've used [nock](https://github.com/node-nock/nock) for node.js:
 
+```
 npm i -D nock
+```
 
 and [sinon](http://sinonjs.org) for mocking in the browser:
 
+```
 npm i -D sinon
+```
 
 You’d also install whatever packages will be used by your new package (either to run on the server in Express.js or to be bundled up by browserify into the bundle that is sent down to the browser) but saving them as standard dependencies like so (substitute whatever packages you’ll use, but you can install them anytime):
 
@@ -349,8 +351,8 @@ Add a script to package.json 'scripts' property:
 When installed [Husky](https://github.com/typicode/husky) overwrites certain [github hooks](https://git-scm.com/docs/githooks) in the .git/hooks directory to trigger prenamed NPM scripts.  We use the 'precommit' hook. Add a precommit script to ‘scripts’:
 
 ```
-“scripts”: {
-	”precommit": "npm run test:single && npm run check-coverage"
+"scripts": {
+	"precommit": "npm run test:single && npm run check-coverage"
 }
 ```
 
