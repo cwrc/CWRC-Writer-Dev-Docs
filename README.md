@@ -10,6 +10,7 @@ Describes the overall organization of the CWRC-Writer code, how we use NPM, and 
 1. [Server](#server)
 1. [How to Develop with CWRC packages](#how-to-develop-with-cwrc-packages)
 1. [How to Create a CWRC package](#how-to-create-a-cwrc-package)
+1. [Sponsors](#Sponsors)
 
 ## Overview
 
@@ -467,7 +468,5 @@ it all up to GitHub which will trigger Travis and hence run the tests and covera
 
 
 
-
-
-
-
+## Sponsors
+Funding for generalization of CWRC-Writer has been provided by [CANARIE](https://www.canarie.ca/?referral=home) under a Research Software Program grant in 2015.
