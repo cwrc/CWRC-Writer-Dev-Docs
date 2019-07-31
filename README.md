@@ -87,66 +87,43 @@ Typical development on the server part of the CWRC-Writer will therefore require
 
 ## How to Develop with CWRC Packages
 
-There are two types of package:  those that interact with the DOM and are intended only to run in a web browser, and those that don't interact with the DOM and might run either in the web browser or on the server in node.js.  Both types of package are fundamentally the same, but we test the web packages differently.  The following steps apply to both types of package, with the different testing steps for the web packages marked accordingly.
+There are two types of package: those that interact with the DOM and are intended only to run in a web browser, and those that don't interact with the DOM and might run either in the web browser or on the server in node.js. Both types of package are fundamentally the same, but we test the web packages differently. The following steps apply to both types of package, with the different testing steps for the web packages marked accordingly.
 
 #### Basic Development Setup
 
-* Fork or clone (depending on your role in the project) the relevant repo (i.e., one of the CWRC repos: CWRC-WriterBase, CWRC-Git, etc.) to your local machine.
+* Fork or clone (depending on your role in the project) the relevant repository to your local machine.
 
-* `npm install` to install the node.js dependencies 
-	
-	NOTE:  we use `npm set save-exact true` to save dependencies as exact version numbers, so NPM should install exact versions when you run install
+* `npm install` to install the node.js dependencies.
 
-* If the repository has a config.js file with passwords or tokens, you'll have to set these values appropriately in your cloned repo.  Tell git to ignore the file completely (so that you don't inadvertently commit the file and push it to the public repo thereby exposing the passwords):
+* If the repository has a config.js file with passwords or tokens, you'll have to set these values appropriately in your cloned repo.  Tell git to ignore the file completely (so that you don't inadvertently commit the file and push it to the public repo thereby exposing the passwords) using `git update-index --skip-worktree config.js`
 
-`git update-index --skip-worktree config.js`
+	Note that .gitignore doesn't ignore files that have been comitted, and the config.js file likely has been commited to allow the Travis build tool to run, albeit with dummy values.
 
-Note that .gitignore doesn't ignore files that have been comitted, and the config.js file likely has been commited to allow the Travis build tool to run, albeit with dummy values.
-
-#### Test and code
+#### Test and Code
 
 * write a test (or two) for your new feature 
 
-* `npm test` to run the tests
+* `npm run test` to run the tests
 
 * write some code to satisfy new test
 
-Depending on the type of package, different tests are used:
+Depending on the type (and age) of the package, different testing libraries are used. Older packages use [tape](https://www.npmjs.com/package/tape) as a testing framework and [sinon](https://www.npmjs.com/package/sinon) for server response mockups. Newer packages use [mocha](https://www.npmjs.com/package/mocha) as a testing framework, [chai](https://www.npmjs.com/package/chai) as an assertion library, and [nock](https://www.npmjs.com/package/nock) for server response mockups.
 
-###### no DOM no browswer no problem
+See the test files for each CWRC package to get an idea of how the actual tests are written.
 
-Testing of non-DOM (no interaction with the browser DOM, so can run either in browser or on server in node.js) packages is described in the [cwrc-git](https://github.com/cwrc/CWRC-Git) package.
+#### Commit to GitHub / Build in Travis / Release to npm
 
-###### DOM
-
-Testing of packages that interact with the browser DOM is described in the [cwrc-git-dialogs](https://github.com/cwrc/cwrc-git-dialogs) package.
-
-###### REST API
-
-Testing of REST API calls is described in the [CWRC-GitServer](https://github.com/cwrc/CWRC-GitServer) package.
-
-
-#### Commit to Github / Build in Travis / Release to NPM
-
-We use [commitizen](https://www.npmjs.com/package/commitizen), [Travis](https://travis-ci.org), [semantic-release](https://www.npmjs.com/package/semantic-release), [Istanbul](https://www.npmjs.com/package/istanbul) (although Istanbul has just been subsumed into NYC so we'll soon have to update), and [codecov.io](https://codecov.io) for our commits, builds, NPM releases, code coverage, and code coverage reporting.  This should all be mostly setup when you clone the repository, but you may have to rerun some portions on your own machine.  For a full description of the setup see below [How to Create a new CWRC package](#how-to-create-a-new-cwrc-package).
-
-Semantic-release-cli configures the corresponding Travis build (on the Travis web site in the Travis account associated with the given Github username) so that when the Travis build is triggered (whenever you push a change to the GitHub repo), Travis will run semantic-release, which will in turn:
-
-- write a new version number to package.json
-- deploy a new version to the NPM registry if the commited change is either a new feature or a breaking change.
-- generate a changelog
-- create a release in the Github project
-
-A full description of what semantic-release-cli does is [here](https://github.com/semantic-release/cli#what-it-does).
-A full description of what semantic-release itself does is [here](https://github.com/semantic-release/semantic-release#how-does-it-work)
+We use [commitizen](https://www.npmjs.com/package/commitizen), [Travis](https://travis-ci.org), [semantic-release](https://www.npmjs.com/package/semantic-release), [Istanbul](https://www.npmjs.com/package/istanbul) / [nyc](https://www.npmjs.com/package/nyc), and [codecov.io](https://codecov.io) for our commits, builds, npm releases, code coverage, and code coverage reporting.  This should all be mostly setup when you clone the repository, but you may have to re-run some portions on your own machine.  For a full description of the setup see [How to Create a New CWRC package](#how-to-create-a-new-cwrc-package) below.
 
 ##### Commits
 
-To submit a commit, stage your changes (e.g. `git add -A`) then instead of using git's commit command, use `npm run cm` (or in some cases the script name may be `commit` so run `npm run commit`.  Just check the scripts property of the package.json to confirm.) which uses commitizen to create commits that adhere to the semantic-release conventions (the same conventions as those used by Google: https://github.com/angular/angular.js/blob/master/CONTRIBUTING.md#commit )
+To submit a commit:
+1. stage your changes (e.g. `git add -A`)
+2. instead of using git's commit command, use `npm run cm`, which uses commitizen to create commits that adhere to the semantic-release conventions
 
-The NPM `husky` package is used to add two pre-commit git hooks that will check that all tests pass and that code coverage is 100% (as calculated by istanbul) before allowing a commit to proceed.
+The [husky](https://www.npmjs.com/package/husky) package is used to add two pre-commit git hooks that will check that all tests pass and that code coverage (as calculated by Istanbul) is above the specified minimum, before allowing a commit to proceed.
 
-After the commit has succeeded then `git push` it all up to github, which will trigger the Travis build.  The Travis build is also set to confirm that all tests pass and that code coverage is 100%.  This is set in the `.travis.yml` file like so:
+After the commit has succeeded then `git push` it all up to GitHub, which will trigger the Travis build. The Travis build is also set to confirm that all tests pass and that the code coverage is adequate.  This is set in the `.travis.yml` file like so:
 
 ```
 script:
@@ -154,17 +131,15 @@ script:
   - npm run check-coverage
 ```
 
-Of course, if the githooks that check tests and code coverage themselves passed, then the Travis check for tests and code coverage should also be fine (but a second check is well worth running).
+Of course, if the husky hooks that check tests and code coverage themselves passed, then the Travis check for tests and code coverage should also be fine (but a second check is well worth running).
 
 ##### Travis
 
-Results of the travis build are accessed using the github owner's name, and the repository name, like so:
-
-`https://travis-ci.org/cwrc/CWRC-Git` 
+Results of the Travis build are accessed using the GitHub repo owner's name and the repository name, e.g. https://travis-ci.org/cwrc/CWRC-Git
 
 ##### Code Coverage
 
-After the Travis build finishes (successfully), Travis triggers two of our NPM scripts:  to report coverage to codecov.io and to run semantic release to publish to NPM.  These triggers are defined in `.travis.yml`:
+After the Travis build finishes (successfully), Travis triggers scripts to report coverage to codecov.io and to run semantic release to publish to npm. This is set in the `.travis.yml` file like so:
 
 ```
 after_success:
@@ -172,29 +147,22 @@ after_success:
   - npm run travis-deploy-once "npm run semantic-release"
 ```
 
-report-coverage publishes the code coverage statistics to codecov.io where the coverage can be viewed:
+report-coverage publishes the code coverage statistics to codecov.io where the coverage can be viewed: https://codecov.io/gh/cwrc/CWRC-Git/
 
-`https://codecov.io/gh/cwrc/CWRC-Git/`
+You can also browse the code coverage reports locally by opening `coverage/lcov-report/index.html` in the project directory.
 
-You can also browse the code coverage reports locally by opening:
+codecov.io also provides us with the code coverage badge at the top of each repo's README.
 
-`coverage/lcov-report/index.html`
+##### npm Publishing
 
-in the project directory.
-
-codecov.io also provides us with the code coverage badge at the top of this README.
-
-##### NPM Publishing
-
-Finally the `npm run semantic-release` script, listed in the Travis after_success section, is triggered.
-
-The [semantic-release](https://github.com/semantic-release/semantic-release) script follows the [SemVer](http://semver.org/) spec, and:
+When the `npm run semantic-release` script (listed in the Travis after_success section) is triggered, the [semantic-release](https://github.com/semantic-release/semantic-release) package performs the following actions:
  
-- updates our version number in package.json, following the SemVer spec.
-- publishes a new version to NPM
-- generates a changeling and tags our github repository with a new release
+- updates our version number and publishes a new version to npm
+- generates a changelog and tags our GitHub repository with a new release
 
-Read more about semantic-release and how it works here:  [How Semantic Release works](https://github.com/semantic-release/semantic-release#how-does-it-work)
+Version numbers follow the [SemVer](http://semver.org/) spec.
+
+Read more about semantic-release and how it works here: https://github.com/semantic-release/semantic-release#how-does-it-work
 
 ## How to Create a new CWRC Package
 
@@ -318,7 +286,7 @@ The entries in ’script’ are run first.  If they both pass, then the 'after_s
 - publishes a new version to NPM
 - generates a changelog and tags our github repository with a new release
 
-Read more about semantic-release and how it works here:  [How Semantic Release works](https://github.com/semantic-release/semantic-release#how-does-it-work)
+Read more about semantic-release and how it works here: https://github.com/semantic-release/semantic-release#how-does-it-work
 
 Everything that semantic-release-cli does is described here:  https://github.com/semantic-release/cli#what-it-does
 
