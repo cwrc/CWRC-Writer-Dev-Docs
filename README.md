@@ -297,20 +297,20 @@ Note the difference between semantic-release-cli and semantic-release.  semantic
 
 ##### Configure commitizen
 
-Add a script to package.json 'scripts' property:
+Add a script to package.json `scripts` property:
 
 ```
 "cm": "git-cz",
 ```
 
- Add a commitizen property to the package.json config property:
+ Add a commitizen property to the package.json `config` property:
 
 ```
 "config": {
-    "commitizen": {
-      "path": "node_modules/cz-conventional-changelog"
-    }
+  "commitizen": {
+    "path": "node_modules/cz-conventional-changelog"
   }
+}
 ```
 
 [cz-conventional-changelog](https://github.com/commitizen/cz-conventional-changelog) tells commitizen to structure our commits according to [AngularJS's commit message convention](https://github.com/angular/angular.js/blob/master/DEVELOPERS.md#commits), also called the [conventional-changelog](https://github.com/conventional-changelog/conventional-changelog).
@@ -321,7 +321,7 @@ When installed, [Husky](https://www.npmjs.com/package/husky) overwrites certain 
 
 ```
 "scripts": {
-	"precommit": "npm run test && npm run check-coverage"
+  "precommit": "npm run test && npm run check-coverage"
 }
 ```
 
