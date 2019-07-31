@@ -14,7 +14,9 @@ Describes the overall organization of the CWRC-Writer code, how we use NPM, and 
 
 ## Overview
 
-The CWRC-Writer is an in-browser WYSIWYG XML text editor that also enables stand-off RDF annotation to mark references to named entities in the text, and to make textual annotations. There are two main parts to a CWRC-Writer installation that run more or less independently: the CWRC-Writer editor itself that runs in the web browser, and the complementary backend services that run on a server and provide document storage, XML validation, and entity lookup. The best example of how to put together a full CWRC-Writer installation is our sandbox version, which is running here: [https://cwrc-writer.cwrc.ca/](https://cwrc-writer.cwrc.ca/) and whose code is available here: [CWRC-GitWriter](https://github.com/cwrc/CWRC-GitWriter).
+The CWRC-Writer is an in-browser WYSIWYG XML text editor that also enables stand-off RDF annotation to mark references to named entities in the text, and to make textual annotations. There are two main parts to a CWRC-Writer installation that run more or less independently: the CWRC-Writer editor itself that runs in the web browser, and the complementary backend services that run on a server and provide document storage, XML validation, and entity lookup. The best example of how to put together a full CWRC-Writer installation is our sandbox version, which is useable at [https://cwrc-writer.cwrc.ca/](https://cwrc-writer.cwrc.ca/) and whose code is available at [CWRC-GitWriter](https://github.com/cwrc/CWRC-GitWriter).
+
+![High Level Overview](/images/cwrc-gitwriter-overview.svg)
 
 ## Editor
 
@@ -59,27 +61,29 @@ Dialogs for looking up named entities (e.g. people, places, organizations, and p
 
 ## Server
 
-The server (or servers) provides services for storing documents, XML validation, and entity lookup.  The server(s) can be implemented however one would like, and in particular, can be a more general server, or set of servers, used by other applications besides the CWRC-Writer.  Some of the backend services could even be provided by a third party, like our default public entity lookup, provided by VIAF.  In any case the services needed are:
+The server provides services for storing documents, XML validation, and entity lookup proxying.  The server can be implemented however one would like, and can be a more general server, or set of servers, used by other applications besides the CWRC-Writer.
 
-#### Entity Lookup
+#### Entity Lookup Proxy
 
-The default lookup for the CWRC-Writer is an example of a general service that isn't specific to the CWRC-Writer.  It uses the VIAF servers directly.  The [cwrc-public-entity-dialogs (NPM)](https://www.npmjs.com/package/cwrc-public-entity-dialogs) package running in the browser makes calls directly to VIAF.  You could alternatively implement your own server side entity management system and follow the example of the [cwrc-public-entity-dialogs (NPM)](https://www.npmjs.com/package/cwrc-public-entity-dialogs) to make calls to your own system or to any other system, for example to another lookup service like say WorldCat.
+Certain lookup services don't provide HTTPS endpoints for querying. Since CWRC-GitWriter is located at an HTTPS URL, a proxy service is required in order to avoid [CORS](https://en.wikipedia.org/wiki/Cross-origin_resource_sharing) errors. The CWRC-GitWriter uses a CWRC-hosted proxy for Getty and DBPedia lookups.
 
 #### XML Validation
 
-The default XML validator is a public server supplied by CWRC and the call to it is handled by the CWRC-WriterBase.  If you are implementing your own validator, you can specify the URL for it using the `validationUrl` property in the CWRC-WriterBase config. However, you will also need to re-implement the [validation module](https://github.com/cwrc/CWRC-WriterBase/blob/master/src/js/layout/modules/validation.js) or ensure that your service returns the same XML that's expected by it.
+The [default XML validator](https://validator.services.cwrc.ca/validator/) is a public service supplied by CWRC, and the call to it is handled by the CWRC-WriterBase.  If you are implementing your own validator, you can specify the URL for it using the `validationUrl` property in the CWRC-WriterBase validation module config. However, you will also need ensure that your service returns the same XML that's expected by the [validation module](https://github.com/cwrc/CWRC-WriterBase/blob/master/src/js/layout/modules/validation/validation.js), or re-implement it yourself.
 
 #### Document Storage
 
 The default backend server we use for storage is the [CWRC-GitServer](https://github.com/cwrc/CWRC-GitServer), an Express.js server that in turn uses GitHub for storage.  We don't make direct calls to GitHub from the browser because we use GitHub's OAuth, which requires that we run a server to receive the OAuth callback from GitHub.
 
-The [CWRC-GitServer](https://github.com/cwrc/CWRC-GitServer) uses one other CWRC NPM package:
+The [CWRC-GitServer](https://github.com/cwrc/CWRC-GitServer) uses one other CWRC npm package:
 
-* in NPM: [cwrcgit](https://www.npmjs.com/package/cwrcgit)
-* in GitHub: [CWRC-Git](https://github.com/cwrc/CWRC-Git)
-Client for creating and updating CWRC XML documents in GitHub through the GitHub API.  Used by the [CWRC-GitServer](https://github.com/cwrc/CWRC-GitServer).
+###### CWRC-Git
+A wrapper for [@octokit/rest](https://www.npmjs.com/package/@octokit/rest) that takes care of searching, loading and saving GitHub documents.
 
-Typical development on the server part of the CWRC-Writer will therefore be changes to the [CWRC-GitServer](https://github.com/cwrc/CWRC-GitServer) (probably to change [routes](https://expressjs.com/en/guide/routing.html)) and to [cwrcgit](https://github.com/cwrc/CWRC-Git).  Both have their own GitHub repository (hyperlinked in the prior sentence) with specifics about how to work with it.  General development practices are also listed below in [How to Develop with CWRC packages](#how-to-develop-with-cwrc-packages).
+* on npm: [cwrcgit](https://www.npmjs.com/package/cwrcgit)
+* on GitHub: [CWRC-Git](https://github.com/cwrc/CWRC-Git)
+
+Typical development on the server part of the CWRC-Writer will therefore require changes to both the [CWRC-GitServer](https://github.com/cwrc/CWRC-GitServer) (probably to change [routes](https://expressjs.com/en/guide/routing.html)) and to [CWRC-Git](https://github.com/cwrc/CWRC-Git).
 
 ## How to Develop with CWRC Packages
 
