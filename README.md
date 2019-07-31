@@ -9,7 +9,7 @@ Describes the overall organization of the CWRC-Writer code, how we use NPM, and 
 1. [Editor](#editor)
 1. [Server](#server)
 1. [How to Develop with CWRC packages](#how-to-develop-with-cwrc-packages)
-1. [How to Create a CWRC package](#how-to-create-a-cwrc-package)
+1. [How to Create a New CWRC package](#how-to-create-a-new-cwrc-package)
 1. [Sponsors](#Sponsors)
 
 ## Overview
@@ -95,9 +95,9 @@ There are two types of package: those that interact with the DOM and are intende
 
 * `npm install` to install the node.js dependencies.
 
-* If the repository has a config.js file with passwords or tokens, you'll have to set these values appropriately in your cloned repo.  Tell git to ignore the file completely (so that you don't inadvertently commit the file and push it to the public repo thereby exposing the passwords) using `git update-index --skip-worktree config.js`
+* If the repository has a `config.js` file with passwords or tokens, you'll have to set these values appropriately in your cloned repo.  Tell git to ignore the file completely (so that you don't inadvertently commit the file and push it to the public repo thereby exposing the passwords) using `git update-index --skip-worktree config.js`
 
-	Note that .gitignore doesn't ignore files that have been comitted, and the config.js file likely has been commited to allow the Travis build tool to run, albeit with dummy values.
+	Note that `.gitignore` doesn't ignore files that have been comitted, and the `config.js` file likely has been commited to allow the Travis build tool to run, albeit with dummy values.
 
 #### Test and Code
 
@@ -107,9 +107,9 @@ There are two types of package: those that interact with the DOM and are intende
 
 * write some code to satisfy new test
 
-Depending on the type (and age) of the package, different testing libraries are used. Older packages use [tape](https://www.npmjs.com/package/tape) as a testing framework and [sinon](https://www.npmjs.com/package/sinon) for server response mockups. Newer packages use [mocha](https://www.npmjs.com/package/mocha) as a testing framework, [chai](https://www.npmjs.com/package/chai) as an assertion library, and [nock](https://www.npmjs.com/package/nock) for server response mockups.
-
 See the test files for each CWRC package to get an idea of how the actual tests are written.
+
+Depending on the type (and age) of the package, different testing libraries are used. Older packages use [tape](https://www.npmjs.com/package/tape) as a testing framework, whereas newer packages use [mocha](https://www.npmjs.com/package/mocha) and [chai](https://www.npmjs.com/package/chai).
 
 #### Commit to GitHub / Build in Travis / Release to npm
 
@@ -164,71 +164,74 @@ Version numbers follow the [SemVer](http://semver.org/) spec.
 
 Read more about semantic-release and how it works here: https://github.com/semantic-release/semantic-release#how-does-it-work
 
-## How to Create a new CWRC Package
+## How to Create a New CWRC Package
 
-There are two types of package:  those that interact with the DOM and are intended only to run in a web browser, and those that don't interact with the DOM and might run either in the web browser or on the server in node.js.  Both types of package are fundamentally the same, but we test them differently.  The following steps apply to both types of package, with different testing steps outlined accordingly.
+There are two types of package:
+* those that interact with the DOM and are intended only to run in a web browser
+* those that don't interact with the DOM and might run either in the web browser or on the server in node.js
 
-##### Create Github repo
+Both types of package are fundamentally the same, but we test them differently.  The following steps apply to both types of package, with different testing steps outlined accordingly.
 
-Create a new github repository in the cwrc account (from the [cwrc github web page](https://github.com/cwrc/)). As of this writing, choose GPL2.0 for the licence, and node for the .gitignore.
+##### Create GitHub repo
 
-Clone the repository to your local machine.  From the directory in which you'd like the new directory created:
+From the [CWRC GitHub account](https://github.com/cwrc/), create a new GitHub repository. Choose `Node` for the .gitignore, and `GNU General Public License v2.0` for the license.
+
+Clone the repository to your local machine. From the directory in which you'd like the new directory created:
 
 ```git clone git@github.com:cwrc/cwrc-somepackage.git```
 
-##### Initialize as NPM package
+##### Initialize Repo as npm Package
 
-Switch into the newly created directory and initialize it as an NPM package:
+Switch into the newly created directory and initialize it as an npm package:
 
 ```
 cd cwrc-somepackage
 npm init
 ```
 
-NPM will prompt you for a few things.  
+npm will prompt you for a few details. Most of these will be specfic to your repo, however:
 
-For 'entry point: (index.js)' switch it to `src/index.js`.  For 'license' specify GPL-2.0
+* for `entry point: (index.js)`, use `src/index.js`
+* for `license`, use `GPL-2.0`
 
-Otherwise answer appropriately. 
+##### Install Dependencies
 
-##### Install dependencies
+Install whatever npm packages you need.  External npm packages (from the npm registry) can be used as:
 
-Install whatever NPM packages you need.  External NPM packages (from the NPM registry) can be used as:
+- part of your own package (a dependency)
+- development tools (e.g. a test runner, or a linting tool) 
+- package-independent tools (globals)
 
-- tools during development (typically in build scripts or during development or testing, .g., a test runner, a lint tool, a watch) 
-- as part of your own package (a dependency)
-- globally during development.  
-
-When installing an NPM package indicate where it should go with either -D (development) -S (standard dependencies, i.e,. packages used by your new package), -g (install globally, usually to use as a command line tool).  
+When installing an npm package, if it is not a standard dependency then indicate where it should go with either `-D` (development), or `-g` (install globally, usually to use as a command line tool).  
 
 For CWRC, we typically install the following development tools:
 
 ```
-npm i -D tape commitizen cz-conventional-changelog husky semantic-release codecov.io nyc watch faucet
+npm i -D commitizen cz-conventional-changelog husky semantic-release travis-deploy-once codecov.io nyc mocha chai watch faucet
 ```
 
 and for packages that are to be run on the browser also install:
 
 ```
-npm i -D babel-preset-es2015 babelify browserify browserify-istanbul watchify concat-stream
+npm i -D babel-core babel-plugin-istanbul babel-preset-env babelify browserify browserify-istanbul watchify concat-stream
 ```
 
-If the package makes http requests then you'll probably want to mock those calls to keep tests fast.  We've used [nock](https://github.com/node-nock/nock) for node.js:
+If the package makes http requests then you'll probably want to mock those calls to keep tests fast.  We've used [nock](https://www.npmjs.com/package/nock) for node.js:
 
 ```
 npm i -D nock
 ```
 
-and [sinon](http://sinonjs.org) for mocking in the browser:
+and [sinon](https://www.npmjs.com/package/sinon) for mocking in the browser:
 
 ```
 npm i -D sinon
 ```
 
-You’d also install whatever packages will be used by your new package (either to run on the server in Express.js or to be bundled up by browserify into the bundle that is sent down to the browser) but saving them as standard dependencies like so (substitute whatever packages you’ll use, but you can install them anytime):
+You'd also install whatever packages will be used by your new package (either to run on the server in Express.js or to be bundled up by browserify into the bundle that is sent down to the browser) but saving them as standard dependencies like so (substitute whatever packages you'll use, but you can install them anytime):
 
 ```
-npm i -S jquery bootstrap  
+npm i jquery bootstrap  
 ```
 
 And finally install semantic-release-cli as a global, so it can be run from the command line:
@@ -237,9 +240,9 @@ And finally install semantic-release-cli as a global, so it can be run from the 
 npm i -g semantic-release-cli 
 ```
 
-##### Configure NPM settings
+##### Configure npm Settings
 
-Now make sure you've got NPM configured to publish to the NPM registry:
+Now make sure you've got npm configured to publish to the npm registry:
 
 ```
 npm set init.author.name "James Chartrand"
@@ -264,23 +267,23 @@ semantic-release-cli setup
 ? What CI are you using? Travis CI
 ```
 
-Semantic release will:
+semantic-release will:
 
-- create .travis.yml (which tells Travis what NPM scripts to run as part of the build, which versions of node.js to use, etc.)
-- login to travis and set github and npm tokens that allow semantic release to later tag a github release, and to publish to npm.
+- create `.travis.yml` (which tells Travis what npm scripts to run as part of the build, which versions of node.js to use, etc.)
+- login to Travis and set GitHub and npm tokens that allow semantic-release to later tag a GitHub release, and to publish to npm.
 
-Modify the .travis.yml that semantic-release-cli created so that 'script' and 'after_success' look like:
+Modify the `.travis.yml` that semantic-release-cli created so that `script` and `after_success` look like:
 
 ```
 script:
-  - npm run test:single
+  - npm run test
   - npm run check-coverage
 after_success:
   - npm run report-coverage
-  - npm run semantic-release
+  - npm run travis-deploy-once "npm run semantic-release"
 ```
 
-The entries in ’script’ are run first.  If they both pass, then the 'after_success' scripts are run.  Report-coverage sends our coverage information to codecov.io.  The [semantic-release](https://github.com/semantic-release/semantic-release) script follows the [SemVer](http://semver.org/) spec, and:
+The entries in `script` are run first.  If they both pass, then the `after_success` scripts are run.  Report-coverage sends our coverage information to codecov.io.  The [semantic-release](https://github.com/semantic-release/semantic-release) script follows the [SemVer](http://semver.org/) spec, and:
  
 - updates our version number in package.json, following the SemVer spec.
 - publishes a new version to NPM
@@ -290,7 +293,7 @@ Read more about semantic-release and how it works here: https://github.com/seman
 
 Everything that semantic-release-cli does is described here:  https://github.com/semantic-release/cli#what-it-does
 
-Note the difference between semantic-release-cli and semantic-release.  semantic-release-cli is run once on the command line to configure travis, the npm user, etc..  semantic-release is run everytime a build is invoked on Travis.
+Note the difference between semantic-release-cli and semantic-release.  semantic-release-cli is run once on the command line to configure Travis, the npm user, etc..  semantic-release is run everytime a build is invoked on Travis.
 
 ##### Configure commitizen
 
@@ -310,118 +313,81 @@ Add a script to package.json 'scripts' property:
   }
 ```
 
-[cz-conventional-changelog](https://github.com/commitizen/cz-conventional-changelog) tells commitizen to structure our commits according to [AngularJS's commit message convention](https://github.com/angular/angular.js/blob/master/CONTRIBUTING.md#-git-commit-guidelines) also called the [conventional-changelog](https://github.com/conventional-changelog/conventional-changelog).
+[cz-conventional-changelog](https://github.com/commitizen/cz-conventional-changelog) tells commitizen to structure our commits according to [AngularJS's commit message convention](https://github.com/angular/angular.js/blob/master/DEVELOPERS.md#commits), also called the [conventional-changelog](https://github.com/conventional-changelog/conventional-changelog).
 
 ##### Configure Husky
 
-When installed [Husky](https://github.com/typicode/husky) overwrites certain [github hooks](https://git-scm.com/docs/githooks) in the .git/hooks directory to trigger prenamed NPM scripts.  We use the 'precommit' hook. Add a precommit script to ‘scripts’:
+When installed, [Husky](https://www.npmjs.com/package/husky) overwrites certain [git hooks](https://git-scm.com/docs/githooks) in the .git/hooks directory to trigger prenamed npm scripts.  We use the `precommit` hook. Add a precommit script to `scripts`:
 
 ```
 "scripts": {
-	"precommit": "npm run test:single && npm run check-coverage"
+	"precommit": "npm run test && npm run check-coverage"
 }
 ```
 
-[Husky](https://github.com/typicode/husky) triggers this script whenever a commit is made to git.  As you can see, it will run our tests and verify our test coverage.
+[Husky](https://www.npmjs.com/package/husky) triggers this script whenever a commit is made to GitHub.  As you can see, it will run our tests and verify our test coverage.
 
-##### Add test and coverage scripts
+##### Add Test and Coverage Scripts
 
-All tests, both in node.js and in the browser, are [TAPE](https://github.com/substack/tape).
+Depending on the type (and age) of the package, different testing libraries are used. Older packages use [tape](https://www.npmjs.com/package/tape) as a testing framework, whereas newer packages use [mocha](https://www.npmjs.com/package/mocha) and [chai](https://www.npmjs.com/package/chai). All packages use [nyc](https://www.npmjs.com/package/nyc) to report coverage.
 
-Add the following to the package.json 'scripts' property.
+Add the following to the package.json `scripts` property.
 
 ###### non-DOM 
 
 ```
-"test:single": "nyc tape test/main.js | tap-spec",
+"test": "nyc mocha",
 "check-coverage": "nyc check-coverage --statements 0 --branches 0 --functions 0 --lines 0",
 "report-coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov"
 ```
-
-[tap-spec](https://www.npmjs.com/package/tap-spec) formats the [tap](https://testanything.org) output from [TAPE](https://github.com/substack/tape).  Could also use [faucet](https://www.npmjs.com/package/faucet) to format the output.
-
-[nyc](https://github.com/istanbuljs/nyc) is the new incarnation of [istanbul](https://github.com/gotwarlost/istanbul) and calclates test coverage.
 
 ###### DOM
 
 ```
-"test:single": "npm run test:electron && npm generate-coverage",
-"test:browser": "browserify -t browserify-istanbul test/browser.js | browser-run  -p 2222 --static .  | node test/extract-coverage.js | faucet",
-"test:electron": "browserify -t browserify-istanbul test/browser.js | browser-run --static . | node test/extract-coverage.js | faucet ",
-"test:chrome": "browserify -t browserify-istanbul test/browser.js | browser-run --static . -b chrome | node test/extract-coverage.js | faucet ",
+"test": "npm run test:electron && npm generate-coverage",
+"test:browser": "browserify -t browserify-istanbul test/browser.js | browser-run -p 2222 --static . | node test/extract-coverage.js | faucet",
+"test:electron": "browserify -t browserify-istanbul test/browser.js | browser-run --static . | node test/extract-coverage.js | faucet",
 "check-coverage": "nyc check-coverage --statements 0 --branches 0 --functions 0 --lines 0",
 "report-coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov"
 ```
 
-Create a file test/extract-coverage.js containing:
+NB: you need to add the `extract-coverage.js` file.
+
+For a complete explanation of how we test in the browser and generate test coverage statistics (including extract-coverage.js), see [DOM Testing](https://github.com/cwrc/CWRC-Writer-Dev-Docs/blob/master/DOM_TESTING.md).
+
+##### Setup Browser Development
+
+If the package is intended to run in the web browser, then we'd like to build the code while developing to see the effect of changes. So, we add an npm script to browserify the code and thereby allow manually testing it directly in a web browser: 
 
 ```
-'use strict'
-
-// from https://github.com/davidguttman/cssify/blob/master/test/extract-coverage.js
-
-var fs = require('fs')
-var path = require('path')
-var concatStream = require('concat-stream')
-
-var covPath = path.join(__dirname, '..', 'coverage', 'coverage.json')
-
-process.stdin.pipe(concatStream(function (input) {
-
-  input = input.toString('utf-8')
-  var sp = input.split('# coverage: ')
-  var output = sp[0]
-  var coverage = sp[1]
-  console.log(output)
-
-  fs.writeFile(covPath, coverage, function (err) {
-    if (err) console.error(err)
-  })
-}))
+"test:browserify": "browserify test/manual.js -o build/test.js --debug -t [ babelify --presets [ es2015 ] ]",
 ```
 
-A complete explantation of how we test in the browser and generate test coverage statistics (tricky!) is [here](https://github.com/cwrc/cwrc-git-dialogs#testing)
-
-##### Setup browser development
-
-If the package is intended to run in the web browser, then we'd like to run the code while developing to see the effect of changes. So, we add an NPM script to browserify the code and thereby allow manually testing it directly in a web browser: 
+Couple this with a watch (using [watchify](https://www.npmjs.com/package/watchify), which is basically browserify with a watch), and it becomes quicker and easier to makes changes to the source and see the result immediately in the browser:
 
 ```
-"browserify": "browserify test/manual.js -o build/test.js --debug -t [ babelify --presets [ es2015 ] ]",
+ "test:watch": "watchify test/manual.js -o build/test.js --debug --verbose -t [ babelify --presets [ es2015 ] ]",
 ```
 
-Couple this with a watch (using watchify, which is basically browserify with a watch), and it becomes that little bit easier to makes changes to the source and see the result immediately in the browser (with a refresh - command-R):
-
-```
- "watch": "watchify test/manual.js -o build/test.js --debug --verbose -t [ babelify --presets [ es2015 ] ]",
-```
-
-The build/test.js file can now be linked into an html file to allow us to play with the running code in a browser.  An example index.html file is in the [cwrc-git-dialogs](https://github.com/cwrc/cwrc-git-dialogs) project.
+The `build/test.js` file can now be linked into an HTML file to allow us to play with the running code in a browser.
 
 ##### Source
 
-Create a 'src' folder.  The 'entry point' into your new package is src/index.js  (as specified during 'npm init' and in the package.json for 'main').  This is where your code goes.  You can of course split your code out into other files that are required into index.js, but ideally the package is small enough that the source fits comfortably within the single index.js file.  If it gets unwieldy, consider splitting out a new package.
+Create a `src` folder.  The "entry point" into your new package is `src/index.js` (as specified during `npm init` and in the `package.json` "main" entry).  This is where your code goes.  You can of course split your code out into other files that are required by `index.js`, but ideally the package is small enough that the source fits comfortably within the single `index.js` file.  If it gets unwieldy, consider splitting out a new package.
 
-##### Tests
+##### Commit Changes and Push to GitHub
 
-As mentioned earlier all tests are [TAPE](https://github.com/substack/tape).  
-
-##### Commit
-
-Okay, we’re pretty much setup.  Now commit to github, but follow this slightly different approach:
-
-Instead of:
+The package has now been set up. Commit the changes to GitHub, but use the previously added script:
 
 ```
-git commit -m “some message”
+npm run cm
 ```
-use:
-```
-npm run commit
-```
-which will prompt for various things with which to write the changelog, and will then try to commit.  This will trigger the Git precommit hook, which in turn runs the husky scripts in .git/hooks/precommit, which will run our tests and confirm that our test coverage meets our set limit.  If all's well, the commit is made.
 
-##### Push to GitHub
+instead of the usual:
+
+```
+git commit
+```
 
 After successfully commiting:
 
@@ -430,7 +396,6 @@ git push
 ```
 
 it all up to GitHub which will trigger Travis and hence run the tests and coverage checks again, and then run semantic release as described earlier.
-
 
 
 ## Sponsors
