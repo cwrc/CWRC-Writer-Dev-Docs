@@ -14,55 +14,48 @@ Describes the overall organization of the CWRC-Writer code, how we use NPM, and 
 
 ## Overview
 
-The CWRC-Writer is an in-browser WYSIWYG XML text editor that also enables standoff RDF annotation to mark references to named entities in the text, and to make textual annotations.  There are two main parts to a CWRC-Writer installation that run more or less independently:  the CWRC-Writer editor itself that runs in the web browser, and the complementary backend services that run on a server and provide document storage, XML validation, and entity lookup.  The best example of how to put together a full CWRC-Writer installation is our sandbox version, which is running here: [http://208.75.74.217](http://208.75.74.217) and whose code is available here:  [CWRC-GitWriter](https://github.com/cwrc/CWRC-GitWriter).
+The CWRC-Writer is an in-browser WYSIWYG XML text editor that also enables stand-off RDF annotation to mark references to named entities in the text, and to make textual annotations. There are two main parts to a CWRC-Writer installation that run more or less independently: the CWRC-Writer editor itself that runs in the web browser, and the complementary backend services that run on a server and provide document storage, XML validation, and entity lookup. The best example of how to put together a full CWRC-Writer installation is our sandbox version, which is running here: [https://cwrc-writer.cwrc.ca/](https://cwrc-writer.cwrc.ca/) and whose code is available here: [CWRC-GitWriter](https://github.com/cwrc/CWRC-GitWriter).
 
 ## Editor
 
-An instance of the CWRC-Writer web editor is built around the [CWRC-WriterBase](https://www.npmjs.com/package/cwrc-writer-base), a heavily customized version of the [TinyMCE](https://www.tinymce.com) web editor.  The CWRC-WriterBase is used in conjunction with a few other CWRC modules:
+An instance of the CWRC-Writer web editor is built around the [CWRC-WriterBase](https://github.com/cwrc/CWRC-WriterBase), a heavily customized version of the [TinyMCE](https://www.tiny.cloud/) text editor.  The CWRC-WriterBase is used in conjunction with a few other CWRC modules:
 
 #### Storage Dialogs
 
-The CWRC-Writer editor ([CWRC-WriterBase](https://www.npmjs.com/package/cwrc-writer-base) running in the web browser) can be used with different backends for storage.  Your storage choice will likely require specific interactions with the end user, and so we've isolated the dialogs for loading and saving documents, allowing you to substitute your own dialogs.  The default dialogs for CWRC are in the [cwrc-git-dialogs](https://www.npmjs.com/package/cwrc-git-dialogs) and handle lists, loads, saves, and authentication to the default [CWRC-GitServer](https://www.npmjs.com/package/cwrc-git-server), which in turn makes calls to GitHub itself.
+The CWRC-Writer editor ([CWRC-WriterBase](https://github.com/cwrc/CWRC-WriterBase) running in the web browser) can be used with different backends for storage.  Your storage choice will likely require specific interactions with the end user, and so we've isolated the dialogs for loading and saving documents, allowing you to substitute your own dialogs.  The default dialogs for CWRC-Writer are in the [cwrc-git-dialogs](https://github.com/cwrc/cwrc-git-dialogs) and handle lists, loads, saves, and authentication to the default [CWRC-GitServer](https://github.com/cwrc/CWRC-GitServer), which in turn makes calls to GitHub itself.
 
 #### Entity Lookup
 
-The editor also allows users to lookup references to named entities (people, places, organizations). The default entity lookup package is [cwrc-public-entity-dialogs](https://www.npmjs.com/package/cwrc-public-entity-dialogs) which looks up named entities and returns unique URIs for the selected entity. This package uses a modular approach so that lookup sources can be easily added. Some of the available sources are [VIAF](https://viaf.org), [Wikidata](https://www.wikidata.org), and [Geonames](http://www.geonames.org/). You can find the modules for these sources here: [viaf-entity-lookup](https://www.npmjs.com/package/viaf-entity-lookup), [wikidata-entity-lookup](https://www.npmjs.com/package/wikidata-entity-lookup), [geonames-entity-lookup](https://www.npmjs.com/package/geonames-entity-lookup).
+The editor also allows users to lookup references to named entities (e.g. people, places, organizations). The default entity lookup package is [CWRC-PublicEntityDialogs](https://github.com/cwrc/CWRC-PublicEntityDialogs) which looks up named entities and returns unique URIs for the selected entity. This package uses a modular approach so that lookup sources can be easily added. Some of the available sources are [VIAF](https://viaf.org), [Wikidata](https://www.wikidata.org), and [GeoNames](http://www.geonames.org/). You can find the modules for these sources here: [viaf-entity-lookup](https://github.com/cwrc/viaf-entity-lookup), [wikidata-entity-lookup](https://github.com/cwrc/wikidata-entity-lookup), [geonames-entity-lookup](https://github.com/cwrc/geonames-entity-lookup).
 
-#### NPM packages and browserify
+#### npm packages and Browserify
 
-The [CWRC-WriterBase](https://www.npmjs.com/package/cwrc-writer-base), the entity lookups, and a few other components are organized as [NPM](https://www.npmjs.com) packages (and published to the [public npm repository](https://www.npmjs.com/search?q=cwrc) for use by anyone).  
-
-The NPM packages that contribute to the browser part of the CWRC-Writer are combined together using the node.js module loading system and with [Browserify](https://browserify.org).  We write code like we would for a node.js application (that would normally run on the server), using the node.js `require` statements to import packages.  Browserify bundles all the code together (both our packages and all other packages we've included like jquery, bootstrap, and so on) into a single javascript file that can then be brought into the index.html page of our web app:
+The [CWRC-WriterBase](https://github.com/cwrc/CWRC-WriterBase), the entity lookups, and a few other components are organized as [npm](https://www.npmjs.com) packages (and published to the [public npm repository](https://www.npmjs.com/search?q=cwrc) for use by anyone).  
+The npm packages that contribute to the browser part of the CWRC-Writer are combined together using the node.js module loading system and with [Browserify](https://browserify.org).  We write code like we would for a node.js application (that would normally run on the server), using the node.js `require` statements to import packages.  Browserify bundles all the code together (both our packages and all other packages we've included like jquery, bootstrap, and so on) into a single javascript file that can then be brought into the index.html page of our web app:
 
 ```<script type="text/javascript" src="js/app.js"></script>```
 
-The best example of how the NPM packages are combined and browserified is in the [CWRC-GitWriter](https://github.com/cwrc/CWRC-GitWriter) repository.  Specifically take a look at the [app.js](https://github.com/cwrc/CWRC-GitWriter/blob/master/src/js/app.js) file, the so-called 'entry point' into the application, which is where Browserify starts and then 'crawls' the dependency tree to pull in all dependencies (as defined by `require` statements).  The [app.js](https://github.com/cwrc/CWRC-GitWriter/blob/master/src/js/app.js) file also shows how the `require` statements are used to combine the CWRC-Writer javascript packages together, by passing them into the [CWRC-WriterBase](https://www.npmjs.com/package/cwrc-writer-base).
+The best example of how the npm packages are combined and browserified is in the [CWRC-GitWriter](https://github.com/cwrc/CWRC-GitWriter) repository.  Specifically take a look at the [app.js](https://github.com/cwrc/CWRC-GitWriter/blob/master/src/js/app.js) file, the so-called "entry point" into the application, which is where Browserify starts and then "crawls" the dependency tree to pull in all dependencies (as defined by `require` statements).  The [app.js](https://github.com/cwrc/CWRC-GitWriter/blob/master/src/js/app.js) file also shows how the `require` statements are used to combine the CWRC-Writer javascript packages together, by passing them into the [CWRC-WriterBase](https://github.com/cwrc/CWRC-WriterBase).
 
-The CWRC NPM packages that are used in the browser:
+The CWRC npm packages that are used in the browser:
 
 ###### CWRC-WriterBase
-The base class for the cwrc-writer.
+The base class for the CWRC-Writer.
 
-* in NPM: [cwrc-writer-base](https://www.npmjs.com/package/cwrc-writer-base)
-* in GitHub: [CWRC-WriterBase](https://github.com/cwrc/CWRC-WriterBase)
+* on npm: [cwrc-writer-base](https://www.npmjs.com/package/cwrc-writer-base)
+* on GitHub: [CWRC-WriterBase](https://github.com/cwrc/CWRC-WriterBase)
 
 ###### cwrc-git-dialogs
-Used by the [cwrc-writer-base](https://www.npmjs.com/package/cwrc-writer-base) to make calls to [CWRC-GitServer](https://github.com/cwrc/CWRC-GitServer).
+Dialogs for loading, saving, and authenticating.
 
-* in NPM: [cwrc-git-dialogs](https://www.npmjs.com/package/cwrc-git-dialogs)
-* in GitHub: [cwrc-git-dialogs](https://github.com/cwrc/cwrc-git-dialogs)
+* on npm: [cwrc-git-dialogs](https://www.npmjs.com/package/cwrc-git-dialogs)
+* on GitHub: [cwrc-git-dialogs](https://github.com/cwrc/cwrc-git-dialogs)
 
-###### CWRC-GitServerClient
-Client for calls to the [CWRC-GitServer](https://github.com/cwrc/CWRC-GitServer) from the [cwrc-git-dialogs](https://www.npmjs.com/package/cwrc-git-dialogs).
+###### CWRC-PublicEntityDialogs
+Dialogs for looking up named entities (e.g. people, places, organizations, and publications) in public authority files.
 
-* in NPM: [cwrc-git-server-client](https://www.npmjs.com/package/cwrc-git-server-client)
-* in GitHub: [CWRC-GitServerClient](https://github.com/cwrc/CWRC-GitServerClient)
-
-###### CWRCPublicEntityDialogs
-Dialogs for the [cwrc-writer-base](https://www.npmjs.com/package/cwrc-writer-base) that lookup people, places, organizations, and publications in public authority files.
-
-* in NPM: [cwrc-public-entity-dialogs](https://www.npmjs.com/package/cwrc-public-entity-dialogs)
-* in GitHub: [CWRC-PublicEntityDialogs](https://github.com/cwrc/CWRC-PublicEntityDialogs)
+* on npm: [cwrc-public-entity-dialogs](https://www.npmjs.com/package/cwrc-public-entity-dialogs)
+* on GitHub: [CWRC-PublicEntityDialogs](https://github.com/cwrc/CWRC-PublicEntityDialogs)
 
 ## Server
 
