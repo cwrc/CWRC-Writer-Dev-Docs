@@ -28,16 +28,16 @@ The CWRC-Writer editor ([CWRC-WriterBase](https://github.com/cwrc/CWRC-WriterBas
 
 #### Entity Lookup
 
-The editor also allows users to lookup references to named entities (e.g. people, places, organizations). The default entity lookup package is [CWRC-PublicEntityDialogs](https://github.com/cwrc/CWRC-PublicEntityDialogs) which looks up named entities and returns unique URIs for the selected entity. This package uses a modular approach so that lookup sources can be easily added. Some of the available sources are [VIAF](https://viaf.org), [Wikidata](https://www.wikidata.org), and [GeoNames](http://www.geonames.org/). You can find the modules for these sources here: [viaf-entity-lookup](https://github.com/cwrc/viaf-entity-lookup), [wikidata-entity-lookup](https://github.com/cwrc/wikidata-entity-lookup), [geonames-entity-lookup](https://github.com/cwrc/geonames-entity-lookup).
+The editor also allows users to lookup references to named entities (e.g. people, places, organizations). The default entity lookup package is [CWRC-PublicEntityDialogs](https://github.com/cwrc/CWRC-PublicEntityDialogs) which looks up named entities and returns unique URIs for the selected entity. This package uses a modular approach so that lookup sources can be easily added. The available sources are [DBpedia](https://wiki.dbpedia.org/), [GeoNames](http://www.geonames.org/), [Getty](http://vocab.getty.edu/), [LGPN](https://www.lgpn.ox.ac.uk/), [VIAF](https://viaf.org), and [Wikidata](https://www.wikidata.org). You can find the modules for these sources here: [dbpedia-entity-lookup](https://github.com/cwrc/dbpedia-entity-lookup), [geonames-entity-lookup](https://github.com/cwrc/geonames-entity-lookup), [getty-entity-lookup](https://github.com/cwrc/getty-entity-lookup), [lgpn-entity-lookup](https://github.com/cwrc/lgpn-entity-lookup), [viaf-entity-lookup](https://github.com/cwrc/viaf-entity-lookup), [wikidata-entity-lookup](https://github.com/cwrc/wikidata-entity-lookup),
 
-#### npm packages and Browserify
+#### npm packages
 
 The [CWRC-WriterBase](https://github.com/cwrc/CWRC-WriterBase), the entity lookups, and a few other components are organized as [npm](https://www.npmjs.com) packages (and published to the [public npm repository](https://www.npmjs.com/search?q=cwrc) for use by anyone).  
-The npm packages that contribute to the browser part of the CWRC-Writer are combined together using the node.js module loading system and with [Browserify](https://browserify.org).  We write code like we would for a node.js application (that would normally run on the server), using the node.js `require` statements to import packages.  Browserify bundles all the code together (both our packages and all other packages we've included like jquery, bootstrap, and so on) into a single javascript file that can then be brought into the index.html page of our web app:
+The npm packages that contribute to the browser part of the CWRC-Writer are combined together using the node.js module loading system and with [Webpack](https://webpack.js.org).  We write code like we would for a node.js application (that would normally run on the server), using the node.js `require` or `import` statements to import packages.  Webpack bundles all the code together (both our packages and all other packages we've included like jquery, bootstrap, and so on) into a single javascript file that can then be brought into the index.html page of our web app:
 
 ```<script type="text/javascript" src="js/app.js"></script>```
 
-The best example of how the npm packages are combined and browserified is in the [CWRC-GitWriter](https://github.com/cwrc/CWRC-GitWriter) repository.  Specifically take a look at the [app.js](https://github.com/cwrc/CWRC-GitWriter/blob/master/src/js/app.js) file, the so-called "entry point" into the application, which is where Browserify starts and then "crawls" the dependency tree to pull in all dependencies (as defined by `require` statements).  The [app.js](https://github.com/cwrc/CWRC-GitWriter/blob/master/src/js/app.js) file also shows how the `require` statements are used to combine the CWRC-Writer javascript packages together, by passing them into the [CWRC-WriterBase](https://github.com/cwrc/CWRC-WriterBase).
+The best example of how the npm packages are combined is in the [CWRC-GitWriter](https://github.com/cwrc/CWRC-GitWriter) repository.  Specifically take a look at the [app.js](https://github.com/cwrc/CWRC-GitWriter/blob/master/src/js/app.js) file, the so-called "entry point" into the application, which is where Webpack starts and then "crawls" the dependency tree to pull in all dependencies (as defined by `require` or `import` statements).  The [app.js](https://github.com/cwrc/CWRC-GitWriter/blob/master/src/js/app.js) file also shows how the `require` or `import` statements are used to combine the CWRC-Writer javascript packages together, by passing them into the [CWRC-WriterBase](https://github.com/cwrc/CWRC-WriterBase).
 
 The CWRC npm packages that are used in the browser:
 
@@ -97,7 +97,7 @@ There are two types of package: those that interact with the DOM and are intende
 
 * If the repository has a `config.js` file with passwords or tokens, you'll have to set these values appropriately in your cloned repo.  Tell git to ignore the file completely (so that you don't inadvertently commit the file and push it to the public repo thereby exposing the passwords) using `git update-index --skip-worktree config.js`
 
-	Note that `.gitignore` doesn't ignore files that have been comitted, and the `config.js` file likely has been commited to allow the Travis build tool to run, albeit with dummy values.
+Note that `.gitignore` doesn't ignore files that have been comitted, and the `config.js` file likely has been commited to allow the Travis build tool to run, albeit with dummy values.
 
 #### Test and Code
 
@@ -109,7 +109,7 @@ There are two types of package: those that interact with the DOM and are intende
 
 See the test files for each CWRC package to get an idea of how the actual tests are written.
 
-Depending on the type (and age) of the package, different testing libraries are used. Older packages use [tape](https://www.npmjs.com/package/tape) as a testing framework, whereas newer packages use [mocha](https://www.npmjs.com/package/mocha) and [chai](https://www.npmjs.com/package/chai).
+Depending on the type (and age) of the package, different testing libraries are used. Older packages use [mocha](https://www.npmjs.com/package/mocha) and [chai](https://www.npmjs.com/package/chai) as a testing framework, whereas newer packages use [jest](https://jestjs.io/).
 
 #### Commit to GitHub / Build in Travis / Release to npm
 
@@ -207,13 +207,13 @@ When installing an npm package, if it is not a standard dependency then indicate
 For CWRC, we typically install the following development tools:
 
 ```
-npm i -D commitizen cz-conventional-changelog husky semantic-release travis-deploy-once codecov.io nyc mocha chai watch faucet
+npm i -D commitizen cz-conventional-changelog husky semantic-release travis-deploy-once codecov.io nyc mocha chai eslint
 ```
 
 and for packages that are to be run on the browser also install:
 
 ```
-npm i -D babel-core babel-plugin-istanbul babel-preset-env babelify browserify browserify-istanbul watchify concat-stream
+npm i -D babel-core babel-preset-env webpack jest eslint
 ```
 
 If the package makes http requests then you'll probably want to mock those calls to keep tests fast.  We've used [nock](https://www.npmjs.com/package/nock) for node.js:
@@ -222,13 +222,7 @@ If the package makes http requests then you'll probably want to mock those calls
 npm i -D nock
 ```
 
-and [sinon](https://www.npmjs.com/package/sinon) for mocking in the browser:
-
-```
-npm i -D sinon
-```
-
-You'd also install whatever packages will be used by your new package (either to run on the server in Express.js or to be bundled up by browserify into the bundle that is sent down to the browser) but saving them as standard dependencies like so (substitute whatever packages you'll use, but you can install them anytime):
+You'd also install whatever packages will be used by your new package (either to run on the server in Express.js or to be bundled up by webpack into the bundle that is sent down to the browser) but saving them as standard dependencies like so (substitute whatever packages you'll use, but you can install them anytime):
 
 ```
 npm i jquery bootstrap  
@@ -344,9 +338,7 @@ Add the following to the package.json `scripts` property.
 ###### DOM
 
 ```
-"test": "npm run test:electron && npm generate-coverage",
-"test:browser": "browserify -t browserify-istanbul test/browser.js | browser-run -p 2222 --static . | node test/extract-coverage.js | faucet",
-"test:electron": "browserify -t browserify-istanbul test/browser.js | browser-run --static . | node test/extract-coverage.js | faucet",
+"test": "jest",
 "check-coverage": "nyc check-coverage --statements 0 --branches 0 --functions 0 --lines 0",
 "report-coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov"
 ```
@@ -354,22 +346,6 @@ Add the following to the package.json `scripts` property.
 NB: you need to add the `extract-coverage.js` file.
 
 For a complete explanation of how we test in the browser and generate test coverage statistics (including extract-coverage.js), see [DOM Testing](https://github.com/cwrc/CWRC-Writer-Dev-Docs/blob/master/DOM_TESTING.md).
-
-##### Setup Browser Development
-
-If the package is intended to run in the web browser, then we'd like to build the code while developing to see the effect of changes. So, we add an npm script to browserify the code and thereby allow manually testing it directly in a web browser: 
-
-```
-"test:browserify": "browserify test/manual.js -o build/test.js --debug -t [ babelify --presets [ es2015 ] ]",
-```
-
-Couple this with a watch (using [watchify](https://www.npmjs.com/package/watchify), which is basically browserify with a watch), and it becomes quicker and easier to makes changes to the source and see the result immediately in the browser:
-
-```
- "test:watch": "watchify test/manual.js -o build/test.js --debug --verbose -t [ babelify --presets [ es2015 ] ]",
-```
-
-The `build/test.js` file can now be linked into an HTML file to allow us to play with the running code in a browser.
 
 ##### Source
 
