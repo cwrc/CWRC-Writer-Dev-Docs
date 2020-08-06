@@ -115,6 +115,16 @@ Depending on the type (and age) of the package, different testing libraries are 
 
 We use [commitizen](https://www.npmjs.com/package/commitizen), [Travis](https://travis-ci.org), [semantic-release](https://www.npmjs.com/package/semantic-release), [Istanbul](https://www.npmjs.com/package/istanbul) / [nyc](https://www.npmjs.com/package/nyc), and [codecov.io](https://codecov.io) for our commits, builds, npm releases, code coverage, and code coverage reporting.  This should all be mostly setup when you clone the repository, but you may have to re-run some portions on your own machine.  For a full description of the setup see [How to Create a New CWRC package](#how-to-create-a-new-cwrc-package) below.
 
+Semantic-release-cli configures the corresponding Travis build (on the Travis web site in the Travis account associated with the given Github username) so that when the Travis build is triggered (whenever you push a change to the GitHub repo), Travis will run semantic-release, which will in turn:
+
+- write a new version number to package.json
+- deploy a new version to the NPM registry if the commited change is either a new feature or a breaking change.
+- generate a changelog
+- create a release in the Github project
+
+A full description of what semantic-release-cli does is [here](https://github.com/semantic-release/cli#what-it-does).
+A full description of what semantic-release itself does is [here](https://github.com/semantic-release/semantic-release#how-does-it-work)
+
 ##### Commits
 
 To submit a commit:
