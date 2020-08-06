@@ -255,6 +255,10 @@ npm set init.author.url "http://openskysolutions.ca"
 npm login  (answer prompts approriately)
 ```
 
+##### Create a Travis account
+
+Go to the [Travis](https://travis-ci.org/) site and use your GitHub account to sign in.
+
 ##### Run semantic-release-cli
 
 ```semantic-release-cli setup```
